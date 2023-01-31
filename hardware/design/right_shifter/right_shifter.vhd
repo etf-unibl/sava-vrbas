@@ -8,7 +8,7 @@
 --
 -- description:
 --
--- This file implements  logic of shifting an eight-bit data to right.
+-- This file implements  logic of shifting  eight-bit data to right.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
