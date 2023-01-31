@@ -35,32 +35,44 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
+--! @file right_shifter.vhd
+--! @brief  This file implements Eight-bit multiplier logic.
+--! @author SAVA-VRBAS team
+-------------------------------------------------------
+--! Use standard library
+library ieee;
+--! Use logic elements
+use ieee.std_logic_1164.all;
+--! Use numeric elements
+use ieee.numeric_std.all;
 
-ENTITY eight_bit_multiplier IS
-  PORT (
-      A_i   : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-      B_i   : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-      RES_o : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+--! @brief Eight-bit multiplier entity description
+
+entity eight_bit_multiplier is
+  port (
+      A_i   : in STD_LOGIC_VECTOR(7 downto 0);  --! Multiplicand
+      B_i   : in STD_LOGIC_VECTOR(7 downto 0);  --! Multiplier
+      RES_o : out STD_LOGIC_VECTOR(15 downto 0) --! Product
 );
-END eight_bit_multiplier;
+end eight_bit_multiplier;
 
-ARCHITECTURE arch OF eight_bit_multiplier IS
-BEGIN
+--! @brief Architecture definition of Eight-bit multiplier
+--! @details Following architecture is based on the algorithm of addition of partial products
 
-  multipler : PROCESS (B_i, A_i)
-    VARIABLE temp_product, temp_b_shift : unsigned (15 DOWNTO 0);
-  BEGIN
+architecture arch of eight_bit_multiplier is
+begin
+
+  multipler : process (B_i, A_i)
+    variable temp_product, temp_b_shift : unsigned (15 downto 0);
+  begin
     temp_product := "0000000000000000";
     temp_b_shift := unsigned("00000000" & B_i);
-    FOR i IN 0 TO 7 LOOP
-      IF A_i(i) = '1' THEN
+    for i in 0 to 7 loop
+      if A_i(i) = '1' then
         temp_product := temp_product + temp_b_shift;
-      END IF;
-      temp_b_shift := temp_b_shift(14 DOWNTO 0) & '0';
-    END LOOP;
+      end if;
+      temp_b_shift := temp_b_shift(14 downto 0) & '0';
+    end loop;
     RES_o <= STD_LOGIC_VECTOR(temp_product);
-  END PROCESS multipler;
-END ARCHITECTURE arch;
+  end process multipler;
+end architecture arch;

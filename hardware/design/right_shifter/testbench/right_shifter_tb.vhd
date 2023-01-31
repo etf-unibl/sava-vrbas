@@ -36,63 +36,63 @@
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
 library ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_1164;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_1164;
 
-LIBRARY vunit_lib;
-CONTEXT vunit_lib.vunit_context;
+library vunit_lib;
+context vunit_lib.vunit_context;
 
-USE vunit_lib.run_pkg.ALL;
-USE vunit_lib.check_pkg.ALL;
+use vunit_lib.run_pkg.all;
+use vunit_lib.check_pkg.all;
 
-LIBRARY common_lib;
+library common_lib;
 
-ENTITY tb_example IS
-GENERIC (runner_cfg : STRING);
-END ENTITY;
+entity tb_example is
+generic (runner_cfg : STRING);
+end entity;
 
-ARCHITECTURE tb OF tb_example IS
+architecture tb of tb_example is
 
-  SIGNAL A_i : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
-  SIGNAL AMT_i : INTEGER;
-  SIGNAL Y_o : STD_LOGIC_VECTOR(7 DOWNTO 0);
+  signal A_i : STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
+  signal AMT_i : INTEGER;
+  signal Y_o : STD_LOGIC_VECTOR(7 downto 0);
 
-BEGIN
+begin
 -- Instantiate the right shifter
-  uut : ENTITY common_lib.right_shifter
-     PORT MAP (
+  uut : entity common_lib.right_shifter
+     port map (
       A_i   => A_i,
       AMT_i => AMT_i,
       Y_o   => Y_o);
 
-  test_runner : PROCESS
-  BEGIN
+  test_runner : process
+  begin
 -- Test runner configuration
     test_runner_setup(runner, runner_cfg);
 
-     WHILE test_suite LOOP
+     while test_suite loop
 
-       IF run("no_shift") THEN
+       if run("no_shift") then
          info("Performing first test!");
          A_i <= "00101110";
          AMT_i <= 0;
-         WAIT FOR 10 ns;
+         wait for 10 ns;
          check_equal(Y_o, STD_LOGIC_VECTOR'("00101110"));
-       ELSIF run("shift_right") THEN
+       elsif run("shift_right") then
          info("Performing second test!");
          A_i <= "00101110";
          AMT_i <= 3;
-         WAIT FOR 10 ns;
+         wait for 10 ns;
          check_equal(Y_o, STD_LOGIC_VECTOR'("00000101"));
-       ELSIF run("shift_amount_overflow") THEN
+       elsif run("shift_amount_overflow") then
          info("Performing third test!");
          A_i <= "00101110";
          AMT_i <= 8;
-         WAIT FOR 10 ns;
+         wait for 10 ns;
          check_equal(Y_o, STD_LOGIC_VECTOR'("00101110"));
-       END IF;
-     END LOOP;
+       end if;
+     end loop;
 
     test_runner_cleanup(runner);
-  END PROCESS;
-END ARCHITECTURE;
+  end process;
+end architecture;
