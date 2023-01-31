@@ -71,12 +71,11 @@ begin
          for j in 1 to 255 loop -- 16 multiplicand values
            B_i <= STD_LOGIC_VECTOR(to_unsigned(j, 8));
            wait for 10 ns;
-           info("Testing multiplying for: A_i = to_string(unsigned(A_i)) and to_string(unsigned(B_i))");
            check_equal(RES_o, STD_LOGIC_VECTOR(unsigned(A_i) * unsigned(B_i)));
            wait for 10 ns;
          end loop;
        end loop;
-
+     info("Testing for all the values is done.");
      test_runner_cleanup(runner);
      wait;
    end process;

@@ -35,7 +35,7 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
---! @file right_shifter.vhd
+--! @file eight_bit_multiplier.vhd
 --! @brief  This file implements Eight-bit multiplier logic.
 --! @author Tanja Popovic
 -------------------------------------------------------
