@@ -58,8 +58,8 @@ architecture tb of tb_with_test_cases is
 begin
    invdut : entity common_lib.eight_bit_multiplier
      port map (
-      A_i => A_i,
-      B_i => B_i,
+      A_i   => A_i,
+      B_i   => B_i,
       RES_o => RES_o);
 
    test_runner : process

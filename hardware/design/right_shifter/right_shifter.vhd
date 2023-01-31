@@ -38,7 +38,7 @@
 -------------------------------------------------------
 --! @file right_shifter.vhd
 --! @brief  This file implements Right-shifter logic.
---! @author SAVA-VRBAS team
+--! @author Emanuela Buganik
 -------------------------------------------------------
 --! Use standard library
 library ieee;

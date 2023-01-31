@@ -58,7 +58,7 @@ architecture tb of tb_example is
   signal Y_o : STD_LOGIC_VECTOR(7 downto 0);
 
 begin
--- Instantiate the right shifter
+
   uut : entity common_lib.right_shifter
      port map (
       A_i   => A_i,
@@ -67,7 +67,7 @@ begin
 
   test_runner : process
   begin
--- Test runner configuration
+
     test_runner_setup(runner, runner_cfg);
 
      while test_suite loop

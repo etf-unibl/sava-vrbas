@@ -37,7 +37,7 @@
 -----------------------------------------------------------------------------
 --! @file right_shifter.vhd
 --! @brief  This file implements Eight-bit multiplier logic.
---! @author SAVA-VRBAS team
+--! @author Tanja Popovic
 -------------------------------------------------------
 --! Use standard library
 library ieee;
