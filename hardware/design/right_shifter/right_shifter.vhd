@@ -63,7 +63,7 @@ end right_shifter;
 architecture rtl of right_shifter is
    signal added : STD_LOGIC_VECTOR(7 downto 0);
 begin
-   added <= "11111111";
+   added <= "00000000";
    with AMT_i select
      Y_o <= added(6 downto 0) & A_i(7) when 7,
             added(5 downto 0) & A_i(7 downto 6) when 6,
