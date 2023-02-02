@@ -69,7 +69,7 @@ begin
     temp_b_shift := unsigned("00000000" & B_i);
     for i in 0 to 7 loop
       if A_i(i) = '1' then
-        temp_product := temp_product + temp_b_shift;
+        temp_product := temp_product - temp_b_shift;
       end if;
       temp_b_shift := temp_b_shift(14 downto 0) & '0';
     end loop;
