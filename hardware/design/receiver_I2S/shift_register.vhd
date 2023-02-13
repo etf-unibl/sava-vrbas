@@ -52,6 +52,7 @@ use ieee.numeric_std.all;
 entity shift_register is
   port (
            clk_i    : in  STD_LOGIC; --! Input clock signal
+           rst_i    : in std_logic; --! Input reset signal
            enable_i : in  STD_LOGIC; --! Input enable signal
            data_i   : in  STD_LOGIC; --! Input data
            data_o   : out STD_LOGIC_VECTOR (23 downto 0)); --! Output data
@@ -62,13 +63,15 @@ end shift_register;
 architecture arch of shift_register is
   signal reg : std_logic_vector(23 downto 0);
 begin
-  shifting : process (clk_i)
-  begin
-    if rising_edge(clk_i) then
-      if enable_i = '1' then
-        reg <= reg(22 downto 0) & data_i;
+  shifting : process (clk, rst)
+    begin
+      if rst = '1' then
+        reg <= (others => '0');
+      elsif rising_edge(clk) then
+        if enable = '1' then
+          reg <= reg(22 downto 0) & data_in;
+        end if;
       end if;
-    end if;
-  end process shifting;
+  end process; shifting;
   data_o <= reg;
 end arch;

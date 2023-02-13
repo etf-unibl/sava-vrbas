@@ -62,6 +62,14 @@ end rx_i2s;
 --! @details This design is implemented using structural description,
 --! it contains 24-bit counter, shift register and two buffers.
 architecture arch of rx_i2s is --! Required components
+  component dual_edge_detector
+    port(
+      clk_i      : in   std_logic;
+      rst_i      : in   std_logic;
+      strobe_i   : in   std_logic;
+      p_o        : out  std_logic
+    );
+  end component;
   component buffer_24_bit 
     port (
       write_enable_i : in std_logic;
@@ -69,7 +77,7 @@ architecture arch of rx_i2s is --! Required components
       data_o : out std_logic_vector (23 downto 0)
     );
   end component;
-  component counter_24_bit
+  component counter_5_bit
     port (
       clk_i, rst_i, enable_i : in std_logic;
       count_o : out std_logic_vector (23 downto 0)
@@ -78,27 +86,35 @@ architecture arch of rx_i2s is --! Required components
   component shift_register
     port (
       clk_i : in std_logic;
+      rst_i : in std_logic;
       enable_i : in std_logic;
       data_i : in std_logic;
       data_o : out std_logic_vector(23 downto 0)
     );
   end component;
-  signal data, count_c, data_l, data_r : std_logic_vector(23 downto 0) := (others => '0'); --! Temp signal for data input 
+  signal data, data_l, data_r : std_logic_vector(23 downto 0) := (others => '0'); --! Temp signal for data input
+  signal count_c : std_logic_vector(4 downto 0) := (others => '0'); --! Temp signal for counter
   signal counter_s_s : std_logic := '0'; --! Temp signal for counter state
-  signal enable_e : std_logic := '0'; --! Temp enable signal
+  signal enable_e, enable_e_temp: std_logic := '0'; --! Temp enable signal
   signal reset_r : std_logic := '1'; --! Temp reset signal
   signal enable_l, enable_r : std_logic; --! Temp enable signals for left and right channels
 begin
 
-  receiving : process (ws_i)
+  edge_detector : dual_edge_detector
+  port map(clk_i    => bclk_i,
+           rst_i    => '0',
+           strobe_i => ws_i, 
+           p_o      => enable_e_pom);
+
+  receiving : process (bclk_i)
   begin
-    if falling_edge(ws_i) and enable_e = '0' then
+    if(enable_e_temp = '1') then
       enable_e <= '1';
       reset_r <= '0';
     end if;
-  end process receiving;
+  end process; receiving;
 
-  counter_s_s <= '1' when count_c = "000000000000000000010111" else --! Checking if registers are full
+  counter_s_s <= '1' when count_c = "11000" else --! Checking if registers are full
                  '0';
 
   enable_l <= (not ws_i) and counter_s_s; --! Writing to left channel buffer
@@ -106,10 +122,11 @@ begin
 
   shift_reg : shift_register --! Instantiation of required components
   port map(clk_i    => bclk_i,
+           rst_i    => '0',
            enable_i => enable_e,
            data_i   => sd_i,
            data_o   => data);
-  counter_count : counter_24_bit
+  counter_count : counter_5_bit
   port map(clk_i    => bclk_i,
            rst_i    => reset_r,
            enable_i => enable_e,

@@ -4,11 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name: counter_24_bit
+-- unit name: counter_5_bit
 --
 -- description:
 --
---   This file implements 24-bit counter
+--   This file implements 5-bit counter
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -36,7 +36,7 @@
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
 --! @file
---! @brief 24-bit counter
+--! @brief 5-bit counter
 -----------------------------------------------------------------------------
 --! Use standard library
 library ieee;
@@ -48,18 +48,18 @@ use ieee.numeric_std.all;
 --! @brief Entity for 24-bit counter
 --! @details This entity contains clock, enable and reset inputs
 --! and output signal.
-entity counter_24_bit is
+entity counter_5_bit is
   port (clk_i    : in  std_logic; --! Input clock signal
         rst_i    : in  std_logic; --! Input reset signal
         enable_i : in  std_logic; --! Input enable signal
-        count_o  : out std_logic_vector (23 downto 0)); --! Output signal for counting
-end counter_24_bit;
+        count_o  : out std_logic_vector (4 downto 0)); --! Output signal for counting
+end counter_5_bit;
 
---! @brief Architecture definition of 24-bit counter
+--! @brief Architecture definition of 5-bit counter
 --! @details This design is used for realisation of I2S RX module,
 --! it checks if registers are full.
 architecture arch of counter_24_bit is
-  signal count_pom : unsigned (23 downto 0); --! Temp signal for counting
+  signal count_pom : unsigned (4 downto 0); --! Temp signal for counting
 begin
   counting : process (clk_i, rst_i)
   begin
