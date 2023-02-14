@@ -52,17 +52,18 @@ end entity;
 
 architecture tb of tb_shifter is
 
-  signal clk_i, enable_i, data_i : std_logic;
+  signal clk_i, rst_i, enable_i, data_i : std_logic;
   signal data_o : std_logic_vector(23 downto 0);
   signal data : std_logic_vector(23 downto 0) := "111011010100010101011101";
-  signal output : std_logic_vector(23 downto 0) := "000000000000000000000000";
+  signal output : std_logic_vector(23 downto 0);
 
 begin
 
   uut : entity common_lib.shift_register
     port map(
-      clk_i  => clk_i,
-      enable_i   => enable_i,
+      clk_i => clk_i,
+      rst_i => rst_i,
+      enable_i => enable_i,
       data_i => data_i,
       data_o => data_o);
 
@@ -80,8 +81,15 @@ begin
     test_runner_setup(runner, runner_cfg);
 
     while test_suite loop
+        output <= (others => '0');
 
-      if run("shifting_2") then
+      if run("reset_shifter") then
+        info("Performing  test reset_shifter");
+        rst_i <= '1';
+        wait for 10 ns;
+        rst_i <= '0';
+        check_equal(data_o, std_logic_vector'("000000000000000000000000"));
+      elsif run("shifting_2") then
         info("Performing  test shifting_2");
         enable_i <= '1';
         data_i <= '1';

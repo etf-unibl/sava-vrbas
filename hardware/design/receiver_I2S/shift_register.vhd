@@ -52,7 +52,7 @@ use ieee.numeric_std.all;
 entity shift_register is
   port (
            clk_i    : in  STD_LOGIC; --! Input clock signal
-           rst_i    : in std_logic; --! Input reset signal
+           rst_i    : in  STD_LOGIC; --! Input reset signal
            enable_i : in  STD_LOGIC; --! Input enable signal
            data_i   : in  STD_LOGIC; --! Input data
            data_o   : out STD_LOGIC_VECTOR (23 downto 0)); --! Output data
@@ -61,7 +61,7 @@ end shift_register;
 --! @brief Architecture definition of 24-bit shift register
 --! @details This design is used for realisation of I2S RX module
 architecture arch of shift_register is
-  signal reg : std_logic_vector(23 downto 0);
+  signal reg : std_logic_vector(23 downto 0) := "000000000000000000000000";
 begin
   shifting : process (clk_i, rst_i)
     begin
