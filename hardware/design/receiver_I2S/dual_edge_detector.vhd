@@ -90,7 +90,7 @@ begin
         end if;
       when one =>
         if strobe_i = '0' then
-          state_next <= edge;
+          state_next <= zero;
         else
           state_next <= one;
         end if;

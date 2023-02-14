@@ -58,7 +58,7 @@ end counter_5_bit;
 --! @brief Architecture definition of 5-bit counter
 --! @details This design is used for realisation of I2S RX module,
 --! it checks if registers are full.
-architecture arch of counter_24_bit is
+architecture arch of counter_5_bit is
   signal count_pom : unsigned (4 downto 0); --! Temp signal for counting
 begin
   counting : process (clk_i, rst_i)
@@ -67,7 +67,7 @@ begin
       count_pom <= (others => '0');
     elsif clk_i'event and clk_i = '1' and enable_i = '1' then
       if count_pom = 24 then
-        count_pom <= (others => '0');
+        count_pom <= (0 => '1', others => '0');
       else
         count_pom <= count_pom + 1;
       end if;

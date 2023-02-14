@@ -63,15 +63,15 @@ end shift_register;
 architecture arch of shift_register is
   signal reg : std_logic_vector(23 downto 0);
 begin
-  shifting : process (clk, rst)
+  shifting : process (clk_i, rst_i)
     begin
-      if rst = '1' then
+      if rst_i = '1' then
         reg <= (others => '0');
-      elsif rising_edge(clk) then
-        if enable = '1' then
-          reg <= reg(22 downto 0) & data_in;
+      elsif rising_edge(clk_i) then
+        if enable_i = '1' then
+          reg <= reg(22 downto 0) & data_i;
         end if;
       end if;
-  end process; shifting;
+  end process shifting;
   data_o <= reg;
 end arch;
