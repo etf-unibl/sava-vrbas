@@ -67,7 +67,7 @@ begin
       count_pom <= (others => '0');
     elsif clk_i'event and clk_i = '1' and enable_i = '1' then
       if count_pom = 24 then
-        count_pom <= (0 => '1', others => '0');
+        count_pom <= (0 => '1', others => '0'); --! MSB is set to one, other bits are zero
       else
         count_pom <= count_pom + 1;
       end if;

@@ -4,10 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name:     SHIFT REGISTER VUNIT TESTBENCH
+-- unit name:     5-BIT COUNTER VUNIT TESTBENCH
+--
 -- description:
 --
--- This file implements 24-bit shift register testbench, following  VUnit testbench form.
+-- This file implements 5-bit counter testbench, following  VUnit testbench form.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -37,6 +38,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_1164;
+use ieee.numeric_std.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;
@@ -46,32 +48,32 @@ use vunit_lib.check_pkg.all;
 
 library common_lib;
 
-entity tb_shifter is
+entity tb_counter is
   generic (runner_cfg : string);
 end entity;
 
-architecture tb of tb_shifter is
-
-  signal clk_i, en_i, data_i : std_logic;
-  signal data_o : std_logic_vector(23 downto 0);
-  signal data : std_logic_vector(23 downto 0) := "111011010100010101011101";
-  signal output : std_logic_vector(23 downto 0) := "000000000000000000000000";
+architecture tb of tb_counter is
+  signal clk_i, rst_i, enable_i : std_logic;
+  signal count_o : std_logic_vector(4 downto 0);
+  signal differ : unsigned(4 downto 0);
 
 begin
 
-  uut : entity common_lib.shift_register
-    port map(
-      clk_i  => clk_i,
-      en_i   => en_i,
-      data_i => data_i,
-      data_o => data_o);
+  uut : entity common_lib.counter_5_bit
 
-  clk_stimulus : process
+    port map(
+      clk_i => clk_i,
+      rst_i => rst_i,
+      enable_i => enable_i,
+      count_o => count_o);
+
+  clock_stimulus : process
   begin
     clk_i <= '0';
     wait for 10 ns;
     clk_i <= not clk_i;
     wait for 10 ns;
+
   end process;
 
   test_runner : process
@@ -80,33 +82,41 @@ begin
     test_runner_setup(runner, runner_cfg);
 
     while test_suite loop
+      differ <= (others => '0'); -- otherwise, it will stay as NaN
+      if run("reset_counter") then
+        info("Performing test reset_counter");
+        rst_i <= '1';
+        wait for 10 ns;
+        rst_i <= '0';
+        check_equal(count_o, std_logic_vector'("00000"));
 
-      if run("shifting_2") then
-        info("Performing  test shifting_2");
-        en_i <= '1';
-        data_i <= '1';
-        wait until rising_edge(clk_i);
-        wait for 2 ns;
-        data_i <= '1';
-        wait until rising_edge(clk_i);
-        wait for 2 ns;
-        check_equal(data_o, std_logic_vector'("000000000000000000000011"));
-      elsif run("no_shifting") then
-        info("Performing test no_shifting!");
-        en_i <= '0';
-        data_i <= '1';
-        wait until rising_edge(clk_i);
-        check_equal(data_o, std_logic_vector'("000000000000000000000000"));
-      elsif run("shift_input_combo") then
-        info("Performing test shift_input_combo!");
-        for i in data'length - 1 to 0 loop
-          data_i <= data(i);
+      elsif run ("check_enable_count_up") then
+        info("Performing test check_enable_count_up");
+        enable_i <= '1';
+        rst_i <= '0';
+        while differ < 24 loop
           wait until rising_edge(clk_i);
           wait for 2 ns;
-          check_equal(data_o, std_logic_vector'(output(22 downto 0) & data_i));
+          differ <= differ + 1;
+          wait for 2 ns;
+          check_equal(count_o, differ);
         end loop;
-      end if;
-    end loop;
-    test_runner_cleanup(runner);
-  end process;
+        enable_i <= '0';
+
+      elsif run("check_counter_overflow") then
+        info("Performing  test check_counter_overflow");
+        enable_i <= '1';
+        rst_i <= '0';
+        while differ <= 24 loop
+          wait until rising_edge(clk_i);
+          wait for 2 ns;
+          differ <= differ + 1;
+        check_equal(count_o, std_logic_vector'("10000"));
+      end loop;
+
+    end if;
+  end loop;
+
+  test_runner_cleanup(runner);
+end process;
 end architecture;

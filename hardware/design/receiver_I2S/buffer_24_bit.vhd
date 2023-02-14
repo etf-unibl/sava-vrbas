@@ -51,7 +51,7 @@ use ieee.numeric_std.all;
 --! and data output.
 entity buffer_24_bit is
   port (
-    clk_i          : in std_logic; --! Input clk signal
+    clk_i          : in  std_logic; --! Input clk signal
     write_enable_i : in  std_logic; --! Input write enable signal
     data_i         : in  std_logic_vector(23 downto 0); --! Input data
     data_o         : out std_logic_vector(23 downto 0) --! Output data
@@ -64,7 +64,7 @@ architecture arch of buffer_24_bit is
 begin
   writing : process (clk_i, write_enable_i)
   begin
-    if (rising_edge(clk_i) and write_enable_i = '1') then
+    if rising_edge(clk_i) and write_enable_i = '1' then
       data_o <= data_i;
     end if;
   end process writing;

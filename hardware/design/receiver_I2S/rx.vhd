@@ -50,7 +50,7 @@ use ieee.numeric_std.all;
 --! and output signal for left and right channel.
 entity rx is
   port (
-    clk_i   : in  std_logic; --! Input clock signal
+    clk_i    : in  std_logic; --! Input clock signal
     scl_i    : in  std_logic; --! Input i2s clock signal
     ws_i     : in  std_logic; --! Input word select signal
     sd_i     : in  std_logic; --! Inpu serial data signal
@@ -71,12 +71,12 @@ architecture arch of rx is --! Required components
       p_o        : out  std_logic
     );
   end component;
-  component buffer_24_bit 
+  component buffer_24_bit
     port (
-      clk_i : in std_logic;
+      clk_i          : in std_logic;
       write_enable_i : in std_logic;
-      data_i : in std_logic_vector (23 downto 0);
-      data_o : out std_logic_vector (23 downto 0)
+      data_i         : in std_logic_vector (23 downto 0);
+      data_o         : out std_logic_vector (23 downto 0)
     );
   end component;
   component counter_5_bit
@@ -87,17 +87,17 @@ architecture arch of rx is --! Required components
   end component;
   component shift_register
     port (
-      clk_i : in std_logic;
-      rst_i : in std_logic;
+      clk_i    : in std_logic;
+      rst_i    : in std_logic;
       enable_i : in std_logic;
-      data_i : in std_logic;
-      data_o : out std_logic_vector(23 downto 0)
+      data_i   : in std_logic;
+      data_o   : out std_logic_vector(23 downto 0)
     );
   end component;
   signal data, data_l, data_r : std_logic_vector(23 downto 0) := (others => '0'); --! Temp signal for data input
   signal count_c : std_logic_vector(4 downto 0) := (others => '0'); --! Temp signal for counter
   signal counter_s_s : std_logic := '0'; --! Temp signal for counter state
-  signal enable_e, enable_e_temp: std_logic := '0'; --! Temp enable signal
+  signal enable_e, enable_e_temp : std_logic := '0'; --! Temp enable signal
   signal reset_r : std_logic := '1'; --! Temp reset signal
   signal enable_l, enable_r : std_logic; --! Temp enable signals for left and right channels
 begin
@@ -105,13 +105,12 @@ begin
   ws_edge_detector : dual_edge_detector
   port map(clk_i    => clk_i,
            rst_i    => '0',
-           strobe_i => ws_i, 
+           strobe_i => ws_i,
            p_o      => enable_e_temp);
-			  
   scl_edge_detector : dual_edge_detector
   port map(clk_i    => clk_i,
            rst_i    => '0',
-           strobe_i => scl_i, 
+           strobe_i => scl_i,
            p_o      => enable_e);
 
   receiving : process (clk_i, enable_e_temp)
