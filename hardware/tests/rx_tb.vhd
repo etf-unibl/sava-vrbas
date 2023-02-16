@@ -4,10 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name:     SHIFT REGISTER VUNIT TESTBENCH
+-- unit name: I2S RECEIVER VUNIT TESTBENCH
+--
 -- description:
 --
--- This file implements 24-bit shift register testbench, following  VUnit testbench form.
+--   This file implements I2S receiver testbench, following  VUnit testbench form.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -36,7 +37,7 @@
 -----------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_1164;
+use ieee.numeric_std.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;
@@ -46,79 +47,74 @@ use vunit_lib.check_pkg.all;
 
 library common_lib;
 
-entity tb_shifter is
+entity tb_rx is
   generic (runner_cfg : string);
 end entity;
 
-architecture tb of tb_shifter is
-
-  signal clk_i, rst_i, enable_i, data_i : std_logic;
-  signal data_o : std_logic_vector(23 downto 0);
-  signal data : std_logic_vector(23 downto 0) := "111011010100010101011101";
-  signal output : std_logic_vector(23 downto 0);
-
+architecture arch of tb_rx is
+  signal clk_i    : std_logic := '0';
+  signal scl_i    : std_logic := '0';
+  signal ws_i     : std_logic;
+  signal sd_i     : std_logic;
+  signal data_l_o : std_logic_vector(23 downto 0);
+  signal data_r_o : std_logic_vector(23 downto 0);
 begin
-
-  uut : entity common_lib.shift_register
+  invdut : entity common_lib.rx
     port map(
-      clk_i => clk_i,
-      rst_i => rst_i,
-      enable_i => enable_i,
-      data_i => data_i,
-      data_o => data_o);
+      clk_i    => clk_i,
+      scl_i    => scl_i,
+      ws_i     => ws_i,
+      sd_i     => sd_i,
+      data_r_o => data_r_o,
+      data_l_o => data_l_o);
 
-  clk_stimulus : process
+  clock : process
   begin
-    clk_i <= '0';
-    wait for 10 ns;
-    clk_i <= not clk_i;
+   clk_i <= not clk_i;
+   wait for 1 ns;
+  end process;
+
+  clocking: process
+  begin
+    scl_i <= not scl_i;
     wait for 10 ns;
   end process;
 
-  test_runner : process
+  sd: process
   begin
+    sd_i <= '0';
+    wait for 40 ns;
+    sd_i <= '1';
+    wait for 20 ns;
+  end process;
 
+  stimulus: process
+  begin
+    ws_i <= '0';
+    wait for 500 ns;
+    ws_i <= '1';
+    wait for 500 ns;
+  end process;
+
+    test_runner : process
+  begin
     test_runner_setup(runner, runner_cfg);
 
     while test_suite loop
-        output <= (others => '0');
-
-      if run("reset_shifter") then
-        info("Performing  test reset_shifter");
-        rst_i <= '1';
-        wait for 10 ns;
-        rst_i <= '0';
-        check_equal(data_o, std_logic_vector'("000000000000000000000000"));
-      elsif run("shifting_2") then
-        info("Performing  test shifting_2");
-        rst_i <= '0';
-        enable_i <= '1';
-        data_i <= '1';
-        wait until rising_edge(clk_i);
-        wait for 2 ns;
-        data_i <= '1';
-        wait until rising_edge(clk_i);
-        wait for 2 ns;
-        check_equal(data_o, std_logic_vector'("000000000000000000000011"));
-      elsif run("no_shifting") then
-        info("Performing test no_shifting!");
-        rst_i <= '0';
-        enable_i <= '0';
-        data_i <= '1';
-        wait until rising_edge(clk_i);
-        check_equal(data_o, std_logic_vector'("000000000000000000000000"));
-      elsif run("shift_input_combo") then
-        info("Performing test shift_input_combo!");
-        rst_i <= '0';
-        enable_i <= '1';
-        for i in data'length - 1 to 0 loop
-          data_i <= data(i);
-          wait until rising_edge(clk_i);
-          wait for 2 ns;
-          check_equal(data_o, std_logic_vector'(output(22 downto 0) & data_i));
-        end loop;
-      end if;
+      
+        if run("left_channel") then
+          info("Performing test left_channel");
+          wait until ws_i = '0';
+          check(data_l_o /= "000000000000000000000000");
+        elsif run("right_channel") then
+          info("Performing test right_channel");
+          wait until ws_i = '1';
+          check(data_r_o /= "000000000000000000000000");
+          wait for 1000 ns;
+        end if;
     end loop;
+
     test_runner_cleanup(runner);
+
   end process;
 end architecture;
