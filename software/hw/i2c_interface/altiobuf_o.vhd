@@ -1,12 +1,12 @@
 -- megafunction wizard: %ALTIOBUF%
 -- GENERATION: STANDARD
 -- VERSION: WM1.0
--- MODULE: altiobuf_out 
+-- MODULE: altiobuf_bidir 
 
 -- ============================================================
 -- File Name: altiobuf_o.vhd
 -- Megafunction Name(s):
--- 			altiobuf_out
+-- 			altiobuf_bidir
 --
 -- Simulation Library Files(s):
 -- 			cyclonev
@@ -34,29 +34,46 @@
 --https://fpgasoftware.intel.com/eula.
 
 
---altiobuf_out CBX_AUTO_BLACKBOX="ALL" DEVICE_FAMILY="Cyclone V" ENABLE_BUS_HOLD="FALSE" LEFT_SHIFT_SERIES_TERMINATION_CONTROL="FALSE" NUMBER_OF_CHANNELS=1 OPEN_DRAIN_OUTPUT="TRUE" PSEUDO_DIFFERENTIAL_MODE="FALSE" USE_DIFFERENTIAL_MODE="FALSE" USE_OE="TRUE" USE_TERMINATION_CONTROL="FALSE" datain dataout oe
---VERSION_BEGIN 20.1 cbx_altiobuf_out 2020:11:11:17:06:45:SJ cbx_mgl 2020:11:11:17:08:38:SJ cbx_stratixiii 2020:11:11:17:06:46:SJ cbx_stratixv 2020:11:11:17:06:46:SJ  VERSION_END
+--altiobuf_bidir CBX_AUTO_BLACKBOX="ALL" DEVICE_FAMILY="Cyclone V" ENABLE_BUS_HOLD="FALSE" NUMBER_OF_CHANNELS=1 OPEN_DRAIN_OUTPUT="TRUE" USE_DIFFERENTIAL_MODE="FALSE" USE_DYNAMIC_TERMINATION_CONTROL="FALSE" USE_TERMINATION_CONTROL="FALSE" datain dataio dataout oe
+--VERSION_BEGIN 20.1 cbx_altiobuf_bidir 2020:11:11:17:06:45:SJ cbx_mgl 2020:11:11:17:08:38:SJ cbx_stratixiii 2020:11:11:17:06:46:SJ cbx_stratixv 2020:11:11:17:06:46:SJ  VERSION_END
 
  LIBRARY cyclonev;
  USE cyclonev.all;
 
---synthesis_resources = cyclonev_io_obuf 1 
+--synthesis_resources = cyclonev_io_ibuf 1 cyclonev_io_obuf 1 
  LIBRARY ieee;
  USE ieee.std_logic_1164.all;
 
- ENTITY  altiobuf_o_iobuf_out_krs IS 
+ ENTITY  altiobuf_o_iobuf_bidir_amo IS 
 	 PORT 
 	 ( 
 		 datain	:	IN  STD_LOGIC_VECTOR (0 DOWNTO 0);
+		 dataio	:	INOUT  STD_LOGIC_VECTOR (0 DOWNTO 0);
 		 dataout	:	OUT  STD_LOGIC_VECTOR (0 DOWNTO 0);
-		 oe	:	IN  STD_LOGIC_VECTOR (0 DOWNTO 0) := (OTHERS => '1')
+		 oe	:	IN  STD_LOGIC_VECTOR (0 DOWNTO 0)
 	 ); 
- END altiobuf_o_iobuf_out_krs;
+ END altiobuf_o_iobuf_bidir_amo;
 
- ARCHITECTURE RTL OF altiobuf_o_iobuf_out_krs IS
+ ARCHITECTURE RTL OF altiobuf_o_iobuf_bidir_amo IS
 
+	 SIGNAL  wire_ibufa_o	:	STD_LOGIC;
 	 SIGNAL  wire_obufa_o	:	STD_LOGIC;
-	 SIGNAL  oe_w :	STD_LOGIC_VECTOR (0 DOWNTO 0);
+	 COMPONENT  cyclonev_io_ibuf
+	 GENERIC 
+	 (
+		bus_hold	:	STRING := "false";
+		differential_mode	:	STRING := "false";
+		simulate_z_as	:	STRING := "z";
+		lpm_type	:	STRING := "cyclonev_io_ibuf"
+	 );
+	 PORT
+	 ( 
+		dynamicterminationcontrol	:	IN STD_LOGIC := '0';
+		i	:	IN STD_LOGIC := '0';
+		ibar	:	IN STD_LOGIC := '0';
+		o	:	OUT STD_LOGIC
+	 ); 
+	 END COMPONENT;
 	 COMPONENT  cyclonev_io_obuf
 	 GENERIC 
 	 (
@@ -78,8 +95,17 @@
 	 END COMPONENT;
  BEGIN
 
-	dataout(0) <= wire_obufa_o;
-	oe_w <= oe;
+	dataio(0) <= wire_obufa_o;
+	dataout(0) <= wire_ibufa_o;
+	ibufa :  cyclonev_io_ibuf
+	  GENERIC MAP (
+		bus_hold => "false",
+		differential_mode => "false"
+	  )
+	  PORT MAP ( 
+		i => dataio(0),
+		o => wire_ibufa_o
+	  );
 	obufa :  cyclonev_io_obuf
 	  GENERIC MAP (
 		bus_hold => "false",
@@ -88,10 +114,10 @@
 	  PORT MAP ( 
 		i => datain(0),
 		o => wire_obufa_o,
-		oe => oe_w(0)
+		oe => oe(0)
 	  );
 
- END RTL; --altiobuf_o_iobuf_out_krs
+ END RTL; --altiobuf_o_iobuf_bidir_amo
 --VALID FILE
 
 
@@ -103,6 +129,7 @@ ENTITY altiobuf_o IS
 	(
 		datain		: IN STD_LOGIC_VECTOR (0 DOWNTO 0);
 		oe		: IN STD_LOGIC_VECTOR (0 DOWNTO 0);
+		dataio		: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0);
 		dataout		: OUT STD_LOGIC_VECTOR (0 DOWNTO 0)
 	);
 END altiobuf_o;
@@ -114,22 +141,24 @@ ARCHITECTURE RTL OF altiobuf_o IS
 
 
 
-	COMPONENT altiobuf_o_iobuf_out_krs
+	COMPONENT altiobuf_o_iobuf_bidir_amo
 	PORT (
 			datain	: IN STD_LOGIC_VECTOR (0 DOWNTO 0);
 			oe	: IN STD_LOGIC_VECTOR (0 DOWNTO 0);
-			dataout	: OUT STD_LOGIC_VECTOR (0 DOWNTO 0)
+			dataout	: OUT STD_LOGIC_VECTOR (0 DOWNTO 0);
+			dataio	: INOUT STD_LOGIC_VECTOR (0 DOWNTO 0)
 	);
 	END COMPONENT;
 
 BEGIN
 	dataout    <= sub_wire0(0 DOWNTO 0);
 
-	altiobuf_o_iobuf_out_krs_component : altiobuf_o_iobuf_out_krs
+	altiobuf_o_iobuf_bidir_amo_component : altiobuf_o_iobuf_bidir_amo
 	PORT MAP (
 		datain => datain,
 		oe => oe,
-		dataout => sub_wire0
+		dataout => sub_wire0,
+		dataio => dataio
 	);
 
 
@@ -147,19 +176,20 @@ END RTL;
 -- Retrieval info: CONSTANT: left_shift_series_termination_control STRING "FALSE"
 -- Retrieval info: CONSTANT: number_of_channels NUMERIC "1"
 -- Retrieval info: CONSTANT: open_drain_output STRING "TRUE"
--- Retrieval info: CONSTANT: pseudo_differential_mode STRING "FALSE"
 -- Retrieval info: CONSTANT: use_differential_mode STRING "FALSE"
--- Retrieval info: CONSTANT: use_oe STRING "TRUE"
+-- Retrieval info: CONSTANT: use_dynamic_termination_control STRING "FALSE"
 -- Retrieval info: CONSTANT: use_termination_control STRING "FALSE"
 -- Retrieval info: USED_PORT: datain 0 0 1 0 INPUT NODEFVAL "datain[0..0]"
+-- Retrieval info: USED_PORT: dataio 0 0 1 0 BIDIR NODEFVAL "dataio[0..0]"
 -- Retrieval info: USED_PORT: dataout 0 0 1 0 OUTPUT NODEFVAL "dataout[0..0]"
 -- Retrieval info: USED_PORT: oe 0 0 1 0 INPUT NODEFVAL "oe[0..0]"
 -- Retrieval info: CONNECT: @datain 0 0 1 0 datain 0 0 1 0
 -- Retrieval info: CONNECT: @oe 0 0 1 0 oe 0 0 1 0
+-- Retrieval info: CONNECT: dataio 0 0 1 0 @dataio 0 0 1 0
 -- Retrieval info: CONNECT: dataout 0 0 1 0 @dataout 0 0 1 0
 -- Retrieval info: GEN_FILE: TYPE_NORMAL altiobuf_o.vhd TRUE
 -- Retrieval info: GEN_FILE: TYPE_NORMAL altiobuf_o.inc FALSE
 -- Retrieval info: GEN_FILE: TYPE_NORMAL altiobuf_o.cmp TRUE
 -- Retrieval info: GEN_FILE: TYPE_NORMAL altiobuf_o.bsf FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL altiobuf_o_inst.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL altiobuf_o_inst.vhd FALSE
 -- Retrieval info: LIB_FILE: cyclonev

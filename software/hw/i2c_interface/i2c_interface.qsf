@@ -19,7 +19,7 @@
 #
 # Quartus Prime
 # Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-# Date created = 21:06:28  February 14, 2023
+# Date created = 19:05:32  February 16, 2023
 #
 # -------------------------------------------------------------------------- #
 #
@@ -41,7 +41,7 @@ set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEMA5F31C6
 set_global_assignment -name TOP_LEVEL_ENTITY i2c_interface
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
-set_global_assignment -name PROJECT_CREATION_TIME_DATE "21:06:28  FEBRUARY 14, 2023"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:05:32  FEBRUARY 16, 2023"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name BOARD "DE1-SoC Board"
@@ -52,32 +52,19 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
-set_global_assignment -name QIP_FILE altiobuf_o.qip
 set_global_assignment -name VHDL_FILE i2c_interface.vhd
-set_global_assignment -name VHDL_FILE dual_edge_detector.vhd
+set_global_assignment -name VHDL_FILE falling_edge.vhd
+set_global_assignment -name VHDL_FILE rising_edge_detector.vhd
+set_global_assignment -name QIP_FILE pll_12MHz.qip
+set_global_assignment -name SIP_FILE pll_12MHz.sip
+set_global_assignment -name QIP_FILE altiobuf_o.qip
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
-set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
-set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
-set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH i2c_interface_tb -section_id eda_simulation
-set_global_assignment -name EDA_TEST_BENCH_NAME i2c_interface_tb -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id i2c_interface_tb
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME i2c_interface_tb -section_id i2c_interface_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/i2c_interface.vht -section_id i2c_interface_tb
 set_location_assignment PIN_AF14 -to clk_i
 set_location_assignment PIN_K12 -to codec_sda_io[0]
+set_location_assignment PIN_G7 -to codec_xck
 set_location_assignment PIN_AC18 -to rpi_sda_io[0]
 set_location_assignment PIN_Y17 -to scl_i
 set_location_assignment PIN_J12 -to scl_o
-set_global_assignment -name QIP_FILE pll_12MHz.qip
-set_global_assignment -name SIP_FILE pll_12MHz.sip
-set_location_assignment PIN_G7 -to codec_xck
-set_global_assignment -name QIP_FILE altiobuf_i.qip
-set_global_assignment -name VHDL_FILE falling_edge_detector.vhd
-set_global_assignment -name VHDL_FILE output_files/rising_edge_detector.vhd
-set_global_assignment -name VHDL_FILE rising_edge_detector.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
