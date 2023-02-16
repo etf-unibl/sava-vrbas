@@ -68,4 +68,16 @@ set_global_assignment -name EDA_TEST_BENCH_NAME i2c_interface_tb -section_id eda
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id i2c_interface_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME i2c_interface_tb -section_id i2c_interface_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/i2c_interface.vht -section_id i2c_interface_tb
+set_location_assignment PIN_AF14 -to clk_i
+set_location_assignment PIN_K12 -to codec_sda_io[0]
+set_location_assignment PIN_AC18 -to rpi_sda_io[0]
+set_location_assignment PIN_Y17 -to scl_i
+set_location_assignment PIN_J12 -to scl_o
+set_global_assignment -name QIP_FILE pll_12MHz.qip
+set_global_assignment -name SIP_FILE pll_12MHz.sip
+set_location_assignment PIN_G7 -to codec_xck
+set_global_assignment -name QIP_FILE altiobuf_i.qip
+set_global_assignment -name VHDL_FILE falling_edge_detector.vhd
+set_global_assignment -name VHDL_FILE output_files/rising_edge_detector.vhd
+set_global_assignment -name VHDL_FILE rising_edge_detector.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
