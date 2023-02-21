@@ -121,7 +121,7 @@ begin
     end if;
   end process receiving;
 
-  counter_s_s <= '1' when count_c = "00010" else --! Checking if registers are full
+  counter_s_s <= '1' when count_c = "00001" else --! Checking if registers are full
                  '0';
 
   enable_l <= (not ws_i) and enable_e; --! Reading from left channel buffer
