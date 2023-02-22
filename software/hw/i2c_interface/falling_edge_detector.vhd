@@ -50,10 +50,10 @@ use ieee.std_logic_1164.all;
 --!  and output signal
 entity falling_edge_detector is
   port (
-    clk_i : in std_logic; --! Input clock signal
-    rst_i : in std_logic; --! Input reset signal
-    strobe_i : in std_logic; --! Input signal which transitions we detect
-    p_o : out std_logic --! Output signal which detects transitions of input
+    clk_i    : in  std_logic; --! Input clock signal
+    rst_i    : in  std_logic; --! Input reset signal
+    strobe_i : in  std_logic; --! Input signal which transitions we detect
+    p_o      : out std_logic --! Output signal which detects transitions of input
   );
 end falling_edge_detector;
 
