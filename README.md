@@ -8,7 +8,9 @@ This document serves as a guideline for manipulating the required components and
 
 The development board DE1-Soc was used as necessary for the creation of the project, which specifications can be found [here](http://www.ee.ic.ac.uk/pcheung/teaching/ee2_digital/de1-soc_user_manual.pdf). The layout of the development board is shown in the picture below.
 
-![de1](https://user-images.githubusercontent.com/116347913/220614516-25a1cb7b-13d5-4f7f-b046-39a54b050896.png)
+![DE1-SoC_top45_01](https://user-images.githubusercontent.com/116347913/220632817-d351121d-7827-47f0-aab2-e9430506ee71.jpg)
+
+
 
 As for the needs of the project it is necessary to parameterize the CODEC from the development board, for this purpose Raspberry Pi was used as the second necessary module. A picture of used Raspberry Pi is shown below.
 
