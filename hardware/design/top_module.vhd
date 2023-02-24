@@ -47,19 +47,38 @@ use ieee.numeric_std.all;
 
 --! @brief 
 --! @details
-entity sava_top_level is
+entity top_module is
   port (
     clk_i : in  std_logic; --! Input clock signal
     scl_i : in  std_logic; --! Input i2s clock signal
     ws_i  : in  std_logic; --! Input word select signal
+	 ws_o : out std_logic;
+	 scl_o : out std_logic;
     sd_i  : in  std_logic; --! Input serial data signal
+	 rpi_sda_io	: inout  std_logic_vector(0 downto 0);
+	 i2c_scl_i			: in  std_logic;
+	 i2c_scl_o			: out	std_logic;
+	 codec_sda_io	: inout	std_logic_vector(0 downto 0);
+	 codec_xck		: out		std_logic;
     sd_o  : out std_logic --! Output serial data signal
   );
-end sava_top_level;
+end top_module;
 
 --! @brief
 --! @details
-architecture arch of sava_top_level is
+architecture arch of top_module is
+  component i2c_interface
+    port
+    (
+		clk_i			: in  std_logic;
+		rpi_sda_io	: inout  std_logic_vector(0 downto 0);
+		scl_i			: in  std_logic;
+		scl_o			: out	std_logic;
+		codec_sda_io	: inout	std_logic_vector(0 downto 0);
+		codec_xck		: out		std_logic
+		
+    );
+  end component;
   component rx
     port (
       clk_i    : in  std_logic; --! Input clock signal
@@ -83,6 +102,14 @@ architecture arch of sava_top_level is
 
   signal data_l, data_r : std_logic_vector(23 downto 0) := (others => '0');
 begin
+  i2c : i2c_interface
+  port map(clk_i => clk_i,
+           rpi_sda_io => rpi_sda_io,
+			  scl_i => i2c_scl_i,
+			  scl_o => i2c_scl_o,
+			  codec_sda_io => codec_sda_io,
+			  codec_xck => codec_xck);
+
   receiver : rx
   port map(clk_i => clk_i,
            scl_i => scl_i,
@@ -98,6 +125,7 @@ begin
 			  data_l_i => data_l,
 			  data_r_i => data_r,
 			  sd_o => sd_o);
+<<<<<<< HEAD:hardware/design/sava_top_level.vhd
 end arch;
 
   transmitter : tx
@@ -107,4 +135,8 @@ end arch;
 			  data_l_i => data_l,
 			  data_r_i => data_r,
 			  sd_o => sd_o);
+=======
+	ws_o <= ws_i;
+	scl_o <= scl_i;
+>>>>>>> 1d38020 (Issue #34 : Top level design):hardware/design/top_module.vhd
 end arch;
