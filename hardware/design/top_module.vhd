@@ -125,18 +125,6 @@ begin
 			  data_l_i => data_l,
 			  data_r_i => data_r,
 			  sd_o => sd_o);
-<<<<<<< HEAD:hardware/design/sava_top_level.vhd
-end arch;
-
-  transmitter : tx
-  port map(clk_i => clk_i,
-           scl_i => scl_i,
-			  ws_i  => ws_i,
-			  data_l_i => data_l,
-			  data_r_i => data_r,
-			  sd_o => sd_o);
-=======
 	ws_o <= ws_i;
 	scl_o <= scl_i;
->>>>>>> 1d38020 (Issue #34 : Top level design):hardware/design/top_module.vhd
 end arch;
