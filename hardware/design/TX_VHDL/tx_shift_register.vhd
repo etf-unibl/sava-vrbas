@@ -51,11 +51,11 @@ use ieee.numeric_std.all;
 --! and data output.
 entity tx_shift_register is
   port (
-           clk_i    : in  std_logic; --! Input clock signal
-           rst_i    : in  std_logic; --! Input reset signal
-           enable_i : in  std_logic; --! Input enable signal
-           data_i   : in  std_logic_vector (23 downto 0); --! Input data
-           data_o   : out std_logic); --! Output data
+    clk_i    : in  std_logic; --! Input clock signal
+    rst_i    : in  std_logic; --! Input reset signal
+    enable_i : in  std_logic; --! Input enable signal
+    data_i   : in  std_logic_vector (23 downto 0); --! Input data
+    data_o   : out std_logic); --! Output data
 end tx_shift_register;
 
 --! @brief Architecture definition of 24-bit shift register
@@ -64,19 +64,19 @@ architecture arch of tx_shift_register is
   signal data_o_temp : std_logic;
 begin
   shifting : process (clk_i, rst_i)
-      variable i : integer := 0;
-    begin
-      if rst_i = '1' then
-        data_o_temp <= '0';
-      elsif rising_edge(clk_i) then
-        if enable_i = '1' then
-          data_o_temp <= data_i(i);
-			 i := i + 1;
-			 if(i > 23) then
-            i := 0;
-			 end if;
+    variable i : integer := 0;
+  begin
+    if rst_i = '1' then
+      data_o_temp <= '0';
+    elsif rising_edge(clk_i) then
+      if enable_i = '1' then
+        data_o_temp <= data_i(i);
+        i := i + 1;
+        if (i > 23) then
+          i := 0;
         end if;
       end if;
+    end if;
   end process shifting;
   data_o <= data_o_temp;
 end arch;

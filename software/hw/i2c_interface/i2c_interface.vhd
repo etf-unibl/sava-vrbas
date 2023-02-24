@@ -42,12 +42,12 @@ use ieee.numeric_std.all;
 entity i2c_interface is
   port (
     -- Input ports
-    clk_i        : in    std_logic;
-    rpi_sda_b    : inout std_logic_vector(0 downto 0);
-    scl_i        : in    std_logic;
-    scl_o        : out   std_logic;
-    codec_sda_b  : inout std_logic_vector(0 downto 0);
-    codec_xck_o  : out   std_logic
+    clk_i       : in    std_logic;
+    rpi_sda_b   : inout std_logic_vector(0 downto 0);
+    scl_i       : in    std_logic;
+    scl_o       : out   std_logic;
+    codec_sda_b : inout std_logic_vector(0 downto 0);
+    codec_xck_o : out   std_logic
 
   );
 end i2c_interface;
@@ -55,35 +55,35 @@ end i2c_interface;
 architecture arch of i2c_interface is
 
   type t_state is (codec, rpi, idle1, idle2);
-  signal state_reg : t_state;
+  signal state_reg  : t_state;
   signal state_next : t_state;
 
   signal codec_sda_o : std_logic_vector (0 downto 0);
-  signal codec_oe : std_logic_vector (0 downto 0);
+  signal codec_oe    : std_logic_vector (0 downto 0);
 
   signal rpi_sda_o : std_logic_vector (0 downto 0);
-  signal rpi_oe : std_logic_vector (0 downto 0);
+  signal rpi_oe    : std_logic_vector (0 downto 0);
 
-  signal rpi_rising_edge : std_logic;
+  signal rpi_rising_edge  : std_logic;
   signal rpi_falling_edge : std_logic;
 
   signal codec_clk : std_logic; -- outclk0.clk
-  signal locked : std_logic; --  locked.export
+  signal locked    : std_logic; --  locked.export
   component pll_12MHz is
     port (
-      refclk    : in  std_logic := '0'; --  refclk.clk
-      rst       : in  std_logic := '0'; --   reset.reset
-      outclk_0  : out std_logic; -- outclk0.clk
-      locked    : out std_logic --  locked.export
+      refclk   : in  std_logic := '0'; --  refclk.clk
+      rst      : in  std_logic := '0'; --   reset.reset
+      outclk_0 : out std_logic; -- outclk0.clk
+      locked   : out std_logic --  locked.export
     );
   end component;
 
   component altiobuf_o is
     port (
-      datain   : in    std_logic_vector (0 downto 0);
-      oe       : in    std_logic_vector (0 downto 0);
-      dataio   : inout std_logic_vector (0 downto 0);
-      dataout  : out   std_logic_vector (0 downto 0)
+      datain  : in    std_logic_vector (0 downto 0);
+      oe      : in    std_logic_vector (0 downto 0);
+      dataio  : inout std_logic_vector (0 downto 0);
+      dataout : out   std_logic_vector (0 downto 0)
     );
   end component;
 
@@ -109,10 +109,10 @@ begin
 
   codec_xck_inst : pll_12MHz
   port map(
-    refclk    => clk_i,
-    rst       => '0',
-    outclk_0  => codec_clk,
-    locked    => locked
+    refclk   => clk_i,
+    rst      => '0',
+    outclk_0 => codec_clk,
+    locked   => locked
   );
 
   codec_altiobuf : altiobuf_o
@@ -196,6 +196,6 @@ begin
   end process;
 
   -- concurrent
-  scl_o <= scl_i;
+  scl_o       <= scl_i;
   codec_xck_o <= codec_clk;
 end arch;

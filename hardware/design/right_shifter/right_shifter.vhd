@@ -48,11 +48,11 @@ use ieee.std_logic_1164.all;
 --! @brief Right-shifter entity description
 
 entity right_shifter is
-   port (
-      A_i   : in STD_LOGIC_VECTOR(7 downto 0); --! Input data
-      AMT_i : in INTEGER;                      --! Amount of bits to shift
-      Y_o   : out STD_LOGIC_VECTOR(7 downto 0) --! Output or shifted data
-);
+  port (
+    A_i   : in  std_logic_vector(7 downto 0); --! Input data
+    AMT_i : in  integer; --! Amount of bits to shift
+    Y_o   : out std_logic_vector(7 downto 0) --! Output or shifted data
+  );
 end right_shifter;
 
 --! @brief Architecture definition of Right-shifter
@@ -61,16 +61,16 @@ end right_shifter;
 --! @details For any value rather than within range from 0 to 7, output data is equal to input data, no shifting is performed
 
 architecture rtl of right_shifter is
-   signal added : STD_LOGIC_VECTOR(7 downto 0);
+  signal added : std_logic_vector(7 downto 0);
 begin
-   added <= "00000000";
-   with AMT_i select
-     Y_o <= added(6 downto 0) & A_i(7) when 7,
-            added(5 downto 0) & A_i(7 downto 6) when 6,
-            added(4 downto 0) & A_i(7 downto 5) when 5,
-            added(3 downto 0) & A_i(7 downto 4) when 4,
-            added(2 downto 0) & A_i(7 downto 3) when 3,
-            added(1 downto 0) & A_i(7 downto 2) when 2,
-            added(0) & A_i(7 downto 1) when 1,
-            A_i when others;
+  added <= "00000000";
+  with AMT_i select
+    Y_o <= added(6 downto 0) & A_i(7) when 7,
+    added(5 downto 0) & A_i(7 downto 6) when 6,
+    added(4 downto 0) & A_i(7 downto 5) when 5,
+    added(3 downto 0) & A_i(7 downto 4) when 4,
+    added(2 downto 0) & A_i(7 downto 3) when 3,
+    added(1 downto 0) & A_i(7 downto 2) when 2,
+    added(0) & A_i(7 downto 1) when 1,
+    A_i when others;
 end architecture;

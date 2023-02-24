@@ -49,18 +49,18 @@ use ieee.numeric_std.all;
 --! @details
 entity top_module is
   port (
-    clk_i : in  std_logic; --! Input clock signal
-    scl_i : in  std_logic; --! Input i2s clock signal
-    ws_i  : in  std_logic; --! Input word select signal
-	 ws_o : out std_logic;
-	 scl_o : out std_logic;
-    sd_i  : in  std_logic; --! Input serial data signal
-	 rpi_sda_io	: inout  std_logic_vector(0 downto 0);
-	 i2c_scl_i			: in  std_logic;
-	 i2c_scl_o			: out	std_logic;
-	 codec_sda_io	: inout	std_logic_vector(0 downto 0);
-	 codec_xck		: out		std_logic;
-    sd_o  : out std_logic --! Output serial data signal
+    clk_i        : in    std_logic; --! Input clock signal
+    scl_i        : in    std_logic; --! Input i2s clock signal
+    ws_i         : in    std_logic; --! Input word select signal
+    ws_o         : out   std_logic;
+    scl_o        : out   std_logic;
+    sd_i         : in    std_logic; --! Input serial data signal
+    rpi_sda_io   : inout std_logic_vector(0 downto 0);
+    i2c_scl_i    : in    std_logic;
+    i2c_scl_o    : out   std_logic;
+    codec_sda_io : inout std_logic_vector(0 downto 0);
+    codec_xck    : out   std_logic;
+    sd_o         : out   std_logic --! Output serial data signal
   );
 end top_module;
 
@@ -68,16 +68,16 @@ end top_module;
 --! @details
 architecture arch of top_module is
   component i2c_interface
-     port (
-    -- Input ports
-    clk_i        : in    std_logic;
-    rpi_sda_b    : inout std_logic_vector(0 downto 0);
-    scl_i        : in    std_logic;
-    scl_o        : out   std_logic;
-    codec_sda_b  : inout std_logic_vector(0 downto 0);
-    codec_xck_o  : out   std_logic
+    port (
+      -- Input ports
+      clk_i       : in    std_logic;
+      rpi_sda_b   : inout std_logic_vector(0 downto 0);
+      scl_i       : in    std_logic;
+      scl_o       : out   std_logic;
+      codec_sda_b : inout std_logic_vector(0 downto 0);
+      codec_xck_o : out   std_logic
 
-  );
+    );
   end component;
   component rx
     port (
@@ -94,37 +94,40 @@ architecture arch of top_module is
       clk_i    : in  std_logic; --! Input clock signal
       scl_i    : in  std_logic; --! Input i2s clock signal
       ws_i     : in  std_logic; --! Input word select signal
-      data_l_i : in std_logic_vector(23 downto 0); --! Input buffer for left channel
-      data_r_i : in std_logic_vector(23 downto 0); --! Input buffer for right channel
-      sd_o     : out  std_logic --! Output serial data signal
+      data_l_i : in  std_logic_vector(23 downto 0); --! Input buffer for left channel
+      data_r_i : in  std_logic_vector(23 downto 0); --! Input buffer for right channel
+      sd_o     : out std_logic --! Output serial data signal
     );
   end component;
 
   signal data_l, data_r : std_logic_vector(23 downto 0) := (others => '0');
 begin
   i2c : i2c_interface
-  port map(clk_i => clk_i,
-           rpi_sda_b => rpi_sda_io,
-			  scl_i => i2c_scl_i,
-			  scl_o => i2c_scl_o,
-			  codec_sda_b => codec_sda_io,
-			  codec_xck_o => codec_xck);
+  port map(
+    clk_i       => clk_i,
+    rpi_sda_b   => rpi_sda_io,
+    scl_i       => i2c_scl_i,
+    scl_o       => i2c_scl_o,
+    codec_sda_b => codec_sda_io,
+    codec_xck_o => codec_xck);
 
   receiver : rx
-  port map(clk_i => clk_i,
-           scl_i => scl_i,
-			  ws_i  => ws_i,
-			  sd_i  => sd_i,
-			  data_l_o => data_l,
-			  data_r_o => data_r);
+  port map(
+    clk_i    => clk_i,
+    scl_i    => scl_i,
+    ws_i     => ws_i,
+    sd_i     => sd_i,
+    data_l_o => data_l,
+    data_r_o => data_r);
 
   transmitter : tx
-  port map(clk_i => clk_i,
-           scl_i => scl_i,
-			  ws_i  => ws_i,
-			  data_l_i => data_l,
-			  data_r_i => data_r,
-			  sd_o => sd_o);
-	ws_o <= ws_i;
-	scl_o <= scl_i;
+  port map(
+    clk_i    => clk_i,
+    scl_i    => scl_i,
+    ws_i     => ws_i,
+    data_l_i => data_l,
+    data_r_i => data_r,
+    sd_o     => sd_o);
+  ws_o  <= ws_i;
+  scl_o <= scl_i;
 end arch;

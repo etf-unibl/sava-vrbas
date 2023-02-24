@@ -50,12 +50,12 @@ use ieee.numeric_std.all;
 --! and output signal for left and right channel.
 entity tx is
   port (
-    clk_i   : in  std_logic; --! Input clock signal
+    clk_i    : in  std_logic; --! Input clock signal
     scl_i    : in  std_logic; --! Input i2s clock signal
     ws_i     : in  std_logic; --! Input word select signal
-    data_l_i : in std_logic_vector(23 downto 0); --! Input buffer for left channel
-    data_r_i : in std_logic_vector(23 downto 0); --! Input buffer for right channel
-    sd_o     : out  std_logic --! Output serial data signal
+    data_l_i : in  std_logic_vector(23 downto 0); --! Input buffer for left channel
+    data_r_i : in  std_logic_vector(23 downto 0); --! Input buffer for right channel
+    sd_o     : out std_logic --! Output serial data signal
   );
 end tx;
 
@@ -64,59 +64,61 @@ end tx;
 --! it contains 24-bit counter, shift register and two buffers.
 architecture arch of tx is --! Required components
   component tx_edge_detector
-    port(
-      clk_i      : in   std_logic;
-      rst_i      : in   std_logic;
-      strobe_i   : in   std_logic;
-      p_o        : out  std_logic
+    port (
+      clk_i    : in  std_logic;
+      rst_i    : in  std_logic;
+      strobe_i : in  std_logic;
+      p_o      : out std_logic
     );
   end component;
-  component tx_buffer_24_bit 
+  component tx_buffer_24_bit
     port (
-      clk_i : in std_logic;
-      write_enable_i : in std_logic;
-      data_i : in std_logic_vector (23 downto 0);
-      data_o : out std_logic_vector (23 downto 0)
+      clk_i          : in  std_logic;
+      write_enable_i : in  std_logic;
+      data_i         : in  std_logic_vector (23 downto 0);
+      data_o         : out std_logic_vector (23 downto 0)
     );
   end component;
   component tx_counter_5_bit
     port (
-      clk_i, rst_i, enable_i : in std_logic;
-      count_o : out std_logic_vector (4 downto 0)
+      clk_i, rst_i, enable_i : in  std_logic;
+      count_o                : out std_logic_vector (4 downto 0)
     );
   end component;
   component tx_shift_register
     port (
-      clk_i : in std_logic;
-      rst_i : in std_logic;
-      enable_i : in std_logic;
-      data_i : in std_logic_vector(23 downto 0);
-      data_o : out std_logic
+      clk_i    : in  std_logic;
+      rst_i    : in  std_logic;
+      enable_i : in  std_logic;
+      data_i   : in  std_logic_vector(23 downto 0);
+      data_o   : out std_logic
     );
   end component;
-  signal data : std_logic_vector(23 downto 0) := (others => '0'); --! Temp signal for data input
-  signal count_c : std_logic_vector(4 downto 0) := (others => '0'); --! Temp signal for counter
-  signal counter_s_s, sd_o_l, sd_o_r: std_logic := '0'; --! Temp signal for counter state
-  signal enable_e, enable_e_temp: std_logic := '0'; --! Temp enable signal
-  signal reset_r : std_logic := '1'; --! Temp reset signal
-  signal enable_l, enable_r : std_logic; --! Temp enable signals for left and right channels
+  signal data                        : std_logic_vector(23 downto 0) := (others => '0'); --! Temp signal for data input
+  signal count_c                     : std_logic_vector(4 downto 0)  := (others => '0'); --! Temp signal for counter
+  signal counter_s_s, sd_o_l, sd_o_r : std_logic                     := '0'; --! Temp signal for counter state
+  signal enable_e, enable_e_temp     : std_logic                     := '0'; --! Temp enable signal
+  signal reset_r                     : std_logic                     := '1'; --! Temp reset signal
+  signal enable_l, enable_r          : std_logic; --! Temp enable signals for left and right channels
 begin
 
   ws_edge_detector : tx_edge_detector
-  port map(clk_i    => clk_i,
-           rst_i    => '0',
-           strobe_i => ws_i, 
-           p_o      => enable_e_temp);
-			  
+  port map(
+    clk_i    => clk_i,
+    rst_i    => '0',
+    strobe_i => ws_i,
+    p_o      => enable_e_temp);
+
   scl_edge_detector : tx_edge_detector
-  port map(clk_i    => clk_i,
-           rst_i    => '0',
-           strobe_i => scl_i, 
-           p_o      => enable_e);
+  port map(
+    clk_i    => clk_i,
+    rst_i    => '0',
+    strobe_i => scl_i,
+    p_o      => enable_e);
 
   receiving : process (clk_i, enable_e_temp)
   begin
-    if(enable_e_temp = '1') then
+    if (enable_e_temp = '1') then
       reset_r <= '0';
     end if;
   end process receiving;
@@ -128,24 +130,27 @@ begin
   enable_r <= ws_i and enable_e; --! Reading from right channel buffer
 
   right_shift_reg : tx_shift_register --! Instantiation of required components
-  port map(clk_i    => clk_i,
-           rst_i    => reset_r,
-           enable_i => enable_r,
-           data_i   => data_r_i,
-           data_o   => sd_o_r);
+  port map(
+    clk_i    => clk_i,
+    rst_i    => reset_r,
+    enable_i => enable_r,
+    data_i   => data_r_i,
+    data_o   => sd_o_r);
 
   left_shift_reg : tx_shift_register
-  port map(clk_i    => clk_i,
-           rst_i    => reset_r,
-           enable_i => enable_l,
-           data_i   => data_l_i,
-           data_o   => sd_o_l);
+  port map(
+    clk_i    => clk_i,
+    rst_i    => reset_r,
+    enable_i => enable_l,
+    data_i   => data_l_i,
+    data_o   => sd_o_l);
 
   counter_count : tx_counter_5_bit
-  port map(clk_i    => clk_i,
-           rst_i    => reset_r,
-           enable_i => enable_e,
-           count_o  => count_c);
+  port map(
+    clk_i    => clk_i,
+    rst_i    => reset_r,
+    enable_i => enable_e,
+    count_o  => count_c);
 
   sd_o <= sd_o_l when enable_l = '1' else
           sd_o_r when enable_r = '1';

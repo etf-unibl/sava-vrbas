@@ -51,11 +51,11 @@ use ieee.numeric_std.all;
 --! and data output.
 entity shift_register is
   port (
-           clk_i    : in  STD_LOGIC; --! Input clock signal
-           rst_i    : in std_logic; --! Input reset signal
-           enable_i : in  STD_LOGIC; --! Input enable signal
-           data_i   : in  STD_LOGIC; --! Input data
-           data_o   : out STD_LOGIC_VECTOR (23 downto 0)); --! Output data
+    clk_i    : in  std_logic; --! Input clock signal
+    rst_i    : in  std_logic; --! Input reset signal
+    enable_i : in  std_logic; --! Input enable signal
+    data_i   : in  std_logic; --! Input data
+    data_o   : out std_logic_vector (23 downto 0)); --! Output data
 end shift_register;
 
 --! @brief Architecture definition of 24-bit shift register
@@ -64,14 +64,14 @@ architecture arch of shift_register is
   signal reg : std_logic_vector(23 downto 0);
 begin
   shifting : process (clk_i, rst_i)
-    begin
-      if rst_i = '1' then
-        reg <= (others => '0');
-      elsif rising_edge(clk_i) then
-        if enable_i = '1' then
-          reg <= reg(22 downto 0) & data_i;
-        end if;
+  begin
+    if rst_i = '1' then
+      reg <= (others => '0');
+    elsif rising_edge(clk_i) then
+      if enable_i = '1' then
+        reg <= reg(22 downto 0) & data_i;
       end if;
+    end if;
   end process shifting;
   data_o <= reg;
 end arch;

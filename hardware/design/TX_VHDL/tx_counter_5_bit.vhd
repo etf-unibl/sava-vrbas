@@ -49,10 +49,11 @@ use ieee.numeric_std.all;
 --! @details This entity contains clock, enable and reset inputs
 --! and output signal.
 entity tx_counter_5_bit is
-  port (clk_i    : in  std_logic; --! Input clock signal
-        rst_i    : in  std_logic; --! Input reset signal
-        enable_i : in  std_logic; --! Input enable signal
-        count_o  : out std_logic_vector (4 downto 0)); --! Output signal for counting
+  port (
+    clk_i    : in  std_logic; --! Input clock signal
+    rst_i    : in  std_logic; --! Input reset signal
+    enable_i : in  std_logic; --! Input enable signal
+    count_o  : out std_logic_vector (4 downto 0)); --! Output signal for counting
 end tx_counter_5_bit;
 
 --! @brief Architecture definition of 5-bit counter

@@ -51,7 +51,7 @@ use ieee.numeric_std.all;
 --! and data output.
 entity buffer_24_bit is
   port (
-    clk_i          : in std_logic; --! Input clk signal
+    clk_i          : in  std_logic; --! Input clk signal
     write_enable_i : in  std_logic; --! Input write enable signal
     data_i         : in  std_logic_vector(23 downto 0); --! Input data
     data_o         : out std_logic_vector(23 downto 0) --! Output data

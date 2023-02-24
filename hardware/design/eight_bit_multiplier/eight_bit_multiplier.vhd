@@ -50,10 +50,10 @@ use ieee.numeric_std.all;
 
 entity eight_bit_multiplier is
   port (
-      A_i   : in STD_LOGIC_VECTOR(7 downto 0);  --! Multiplicand
-      B_i   : in STD_LOGIC_VECTOR(7 downto 0);  --! Multiplier
-      RES_o : out STD_LOGIC_VECTOR(15 downto 0) --! Product
-);
+    A_i   : in  std_logic_vector(7 downto 0); --! Multiplicand
+    B_i   : in  std_logic_vector(7 downto 0); --! Multiplier
+    RES_o : out std_logic_vector(15 downto 0) --! Product
+  );
 end eight_bit_multiplier;
 
 --! @brief Architecture definition of Eight-bit multiplier
@@ -73,6 +73,6 @@ begin
       end if;
       temp_b_shift := temp_b_shift(14 downto 0) & '0';
     end loop;
-    RES_o <= STD_LOGIC_VECTOR(temp_product);
+    RES_o <= std_logic_vector(temp_product);
   end process multipler;
 end architecture arch;

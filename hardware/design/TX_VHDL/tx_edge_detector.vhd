@@ -45,19 +45,17 @@ library ieee;
 --! Use numeric elements
 use ieee.std_logic_1164.all;
 
-
 --! @brief Entity for dual-edge detector
 --! @details This entity contains clock, reset, input signal
 --!  and output signal
 entity tx_edge_detector is
-  port(
-    clk_i      : in   std_logic; --! Input clock signal
-    rst_i      : in   std_logic; --! Input reset signal
-    strobe_i   : in   std_logic; --! Input signal which transitions we detect
-    p_o        : out  std_logic  --! Output signal which detects transitions of input
+  port (
+    clk_i    : in  std_logic; --! Input clock signal
+    rst_i    : in  std_logic; --! Input reset signal
+    strobe_i : in  std_logic; --! Input signal which transitions we detect
+    p_o      : out std_logic --! Output signal which detects transitions of input
   );
 end tx_edge_detector;
-
 
 --! @brief Architecture definition of the dual-edge detector circuit
 --! @details This circuit is designed using Moore FSM with 3 states: zero, edge, one
@@ -65,11 +63,11 @@ end tx_edge_detector;
 architecture arch of tx_edge_detector is
 
   type t_sm_de_type is
-    (zero, one, edge);
+  (zero, one, edge);
   signal state_reg, state_next : t_sm_de_type;
 begin
   --! State register
-  state_register : process(clk_i,rst_i)
+  state_register : process (clk_i, rst_i)
   begin
     if rst_i = '1' then
       state_reg <= zero;
@@ -79,7 +77,7 @@ begin
   end process state_register;
 
   --! Next state logic
-  next_state : process(state_reg, strobe_i)
+  next_state : process (state_reg, strobe_i)
   begin
     case state_reg is
       when zero =>
@@ -104,7 +102,7 @@ begin
   end process next_state;
 
   --! Output logic
-  output_logic : process(state_next)
+  output_logic : process (state_next)
   begin
     case state_next is
       when zero =>
