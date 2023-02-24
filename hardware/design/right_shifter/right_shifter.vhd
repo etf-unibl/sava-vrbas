@@ -60,7 +60,7 @@ end right_shifter;
 --! @details Depending on value of AMT_i shifting to right is performed by filling with zeros
 --! @details For any value rather than within range from 0 to 7, output data is equal to input data, no shifting is performed
 
-architecture rtl of right_shifter is
+architecture arch of right_shifter is
   signal added : std_logic_vector(7 downto 0);
 begin
   added <= "00000000";
@@ -73,4 +73,4 @@ begin
     added(1 downto 0) & A_i(7 downto 2) when 2,
     added(0) & A_i(7 downto 1) when 1,
     A_i when others;
-end rtl;
+end arch;

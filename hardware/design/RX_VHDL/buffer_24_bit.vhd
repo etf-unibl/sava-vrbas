@@ -64,7 +64,7 @@ architecture arch of buffer_24_bit is
 begin
   writing : process (clk_i, write_enable_i)
   begin
-    if (rising_edge(clk_i) and write_enable_i = '1') then
+    if rising_edge(clk_i) and write_enable_i = '1' then
       data_o <= data_i;
     end if;
   end process writing;

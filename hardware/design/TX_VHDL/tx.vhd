@@ -118,7 +118,7 @@ begin
 
   receiving : process (clk_i, enable_e_temp)
   begin
-    if (enable_e_temp = '1') then
+    if enable_e_temp = '1' then
       reset_r <= '0';
     end if;
   end process receiving;

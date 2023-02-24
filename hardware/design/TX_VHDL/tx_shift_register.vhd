@@ -72,7 +72,7 @@ begin
       if enable_i = '1' then
         data_o_temp <= data_i(i);
         i := i + 1;
-        if (i > 23) then
+        if i > 23 then
           i := 0;
         end if;
       end if;
