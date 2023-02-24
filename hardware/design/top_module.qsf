@@ -42,7 +42,7 @@ set_global_assignment -name DEVICE 5CSEMA5F31C6
 set_global_assignment -name TOP_LEVEL_ENTITY top_module
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 21.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "16:56:40  FEBRUARY 15, 2023"
-set_global_assignment -name LAST_QUARTUS_VERSION "21.1.1 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
@@ -65,26 +65,6 @@ set_global_assignment -name EDA_TEST_BENCH_NAME top_module_tb -section_id eda_si
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id top_module_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME top_module_tb -section_id top_module_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/top_module.vht -section_id top_module_tb
-set_global_assignment -name VERILOG_FILE i2c_interface/pll_12MHz/pll_12MHz_0002.v
-set_global_assignment -name QIP_FILE i2c_interface/pll_12MHz/pll_12MHz_0002.qip
-set_global_assignment -name QIP_FILE i2c_interface/pll_12MHz.qip
-set_global_assignment -name VHDL_FILE i2c_interface/rising_edge_detector.vhd
-set_global_assignment -name VHDL_FILE i2c_interface/pll_12MHz.vhd
-set_global_assignment -name VHDL_FILE i2c_interface/i2c_interface.vhd
-set_global_assignment -name VHDL_FILE i2c_interface/falling_edge_detector.vhd
-set_global_assignment -name VHDL_FILE i2c_interface/altiobuf_o.vhd
-set_global_assignment -name VHDL_FILE i2c_interface/altiobuf_i.vhd
-set_global_assignment -name VHDL_FILE TX_VHDL/tx_shift_register.vhd
-set_global_assignment -name VHDL_FILE TX_VHDL/tx_edge_detector.vhd
-set_global_assignment -name VHDL_FILE TX_VHDL/tx_counter_5_bit.vhd
-set_global_assignment -name VHDL_FILE TX_VHDL/tx_buffer_24_bit.vhd
-set_global_assignment -name VHDL_FILE RX_VHDL/shift_register.vhd
-set_global_assignment -name VHDL_FILE RX_VHDL/dual_edge_detector.vhd
-set_global_assignment -name VHDL_FILE RX_VHDL/counter_5_bit.vhd
-set_global_assignment -name VHDL_FILE RX_VHDL/buffer_24_bit.vhd
-set_global_assignment -name VHDL_FILE TX_VHDL/tx.vhd
-set_global_assignment -name VHDL_FILE RX_VHDL/rx.vhd
-set_global_assignment -name VHDL_FILE top_module.vhd
 set_location_assignment PIN_J12 -to i2c_scl_o
 set_location_assignment PIN_K12 -to codec_sda_io[0]
 set_location_assignment PIN_G7 -to codec_xck
@@ -97,4 +77,28 @@ set_location_assignment PIN_J7 -to sd_o
 set_location_assignment PIN_H7 -to scl_i
 set_location_assignment PIN_AD17 -to scl_o
 set_location_assignment PIN_Y18 -to ws_o
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/rising_edge_detector.vhd
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/pll_12MHz.vhd -library pll_12MHz
+set_global_assignment -name QIP_FILE ../../software/hw/i2c_interface/pll_12MHz.qip
+set_global_assignment -name SOURCE_FILE ../../software/hw/i2c_interface/pll_12MHz.cmp
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/i2c_interface.vhd
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/falling_edge_detector.vhd
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/dual_edge_detector.vhd
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/altiobuf_o.vhd
+set_global_assignment -name QIP_FILE ../../software/hw/i2c_interface/altiobuf_o.qip
+set_global_assignment -name SOURCE_FILE ../../software/hw/i2c_interface/altiobuf_o.cmp
+set_global_assignment -name VHDL_FILE ../../software/hw/i2c_interface/altiobuf_i.vhd
+set_global_assignment -name QIP_FILE ../../software/hw/i2c_interface/altiobuf_i.qip
+set_global_assignment -name SOURCE_FILE ../../software/hw/i2c_interface/altiobuf_i.cmp
+set_global_assignment -name VHDL_FILE TX_VHDL/tx_shift_register.vhd
+set_global_assignment -name VHDL_FILE TX_VHDL/tx_edge_detector.vhd
+set_global_assignment -name VHDL_FILE TX_VHDL/tx_counter_5_bit.vhd
+set_global_assignment -name VHDL_FILE TX_VHDL/tx_buffer_24_bit.vhd
+set_global_assignment -name VHDL_FILE RX_VHDL/shift_register.vhd
+set_global_assignment -name VHDL_FILE RX_VHDL/dual_edge_detector.vhd
+set_global_assignment -name VHDL_FILE RX_VHDL/counter_5_bit.vhd
+set_global_assignment -name VHDL_FILE RX_VHDL/buffer_24_bit.vhd
+set_global_assignment -name VHDL_FILE TX_VHDL/tx.vhd
+set_global_assignment -name VHDL_FILE RX_VHDL/rx.vhd
+set_global_assignment -name VHDL_FILE top_module.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

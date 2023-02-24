@@ -68,16 +68,16 @@ end top_module;
 --! @details
 architecture arch of top_module is
   component i2c_interface
-    port
-    (
-		clk_i			: in  std_logic;
-		rpi_sda_io	: inout  std_logic_vector(0 downto 0);
-		scl_i			: in  std_logic;
-		scl_o			: out	std_logic;
-		codec_sda_io	: inout	std_logic_vector(0 downto 0);
-		codec_xck		: out		std_logic
-		
-    );
+     port (
+    -- Input ports
+    clk_i        : in    std_logic;
+    rpi_sda_b    : inout std_logic_vector(0 downto 0);
+    scl_i        : in    std_logic;
+    scl_o        : out   std_logic;
+    codec_sda_b  : inout std_logic_vector(0 downto 0);
+    codec_xck_o  : out   std_logic
+
+  );
   end component;
   component rx
     port (
@@ -104,11 +104,11 @@ architecture arch of top_module is
 begin
   i2c : i2c_interface
   port map(clk_i => clk_i,
-           rpi_sda_io => rpi_sda_io,
+           rpi_sda_b => rpi_sda_io,
 			  scl_i => i2c_scl_i,
 			  scl_o => i2c_scl_o,
-			  codec_sda_io => codec_sda_io,
-			  codec_xck => codec_xck);
+			  codec_sda_b => codec_sda_io,
+			  codec_xck_o => codec_xck);
 
   receiver : rx
   port map(clk_i => clk_i,
