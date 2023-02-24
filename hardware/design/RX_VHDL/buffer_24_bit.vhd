@@ -4,11 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name:     RIGHT-SHIFTER
+-- unit name:     buffer_24_bit
 --
 -- description:
 --
--- This file implements  logic of shifting  eight-bit data to right.
+--   This file implements 24 bit buffer logic.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -35,42 +35,37 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
--------------------------------------------------------
---! @file right_shifter.vhd
---! @brief  This file implements Right-shifter logic.
---! @author Emanuela Buganik
--------------------------------------------------------
+-----------------------------------------------------------------------------
+--! @file
+--! @brief 24-bit buffer
+-----------------------------------------------------------------------------
 --! Use standard library
 library ieee;
 --! Use logic elements
 use ieee.std_logic_1164.all;
+--! Use numeric elements
+use ieee.numeric_std.all;
 
---! @brief Right-shifter entity description
-
-entity right_shifter is
+--! @brief Entity for 24-bit buffer
+--! @details This entity contains write enable and data inputs
+--! and data output.
+entity buffer_24_bit is
   port (
-    A_i   : in  std_logic_vector(7 downto 0); --! Input data
-    AMT_i : in  integer; --! Amount of bits to shift
-    Y_o   : out std_logic_vector(7 downto 0) --! Output or shifted data
+    clk_i          : in  std_logic; --! Input clk signal
+    write_enable_i : in  std_logic; --! Input write enable signal
+    data_i         : in  std_logic_vector(23 downto 0); --! Input data
+    data_o         : out std_logic_vector(23 downto 0) --! Output data
   );
-end right_shifter;
+end entity buffer_24_bit;
 
---! @brief Architecture definition of Right-shifter
---! @details Following architecture describes logical shift to right
---! @details Depending on value of AMT_i shifting to right is performed by filling with zeros
---! @details For any value rather than within range from 0 to 7, output data is equal to input data, no shifting is performed
-
-architecture arch of right_shifter is
-  signal added : std_logic_vector(7 downto 0);
+--! @brief Architecture definition of 24-bit buffer
+--! @details This design is used for realisation of I2S RX module
+architecture arch of buffer_24_bit is
 begin
-  added <= "00000000";
-  with AMT_i select
-    Y_o <= added(6 downto 0) & A_i(7) when 7,
-    added(5 downto 0) & A_i(7 downto 6) when 6,
-    added(4 downto 0) & A_i(7 downto 5) when 5,
-    added(3 downto 0) & A_i(7 downto 4) when 4,
-    added(2 downto 0) & A_i(7 downto 3) when 3,
-    added(1 downto 0) & A_i(7 downto 2) when 2,
-    added(0) & A_i(7 downto 1) when 1,
-    A_i when others;
-end arch;
+  writing : process (clk_i, write_enable_i)
+  begin
+    if rising_edge(clk_i) and write_enable_i = '1' then
+      data_o <= data_i;
+    end if;
+  end process writing;
+end architecture arch;

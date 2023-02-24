@@ -4,11 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name:     RIGHT-SHIFTER
+-- unit name: counter_5_bit
 --
 -- description:
 --
--- This file implements  logic of shifting  eight-bit data to right.
+--   This file implements 5-bit counter
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -35,42 +35,44 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
--------------------------------------------------------
---! @file right_shifter.vhd
---! @brief  This file implements Right-shifter logic.
---! @author Emanuela Buganik
--------------------------------------------------------
+--! @file
+--! @brief 5-bit counter
+-----------------------------------------------------------------------------
 --! Use standard library
 library ieee;
 --! Use logic elements
 use ieee.std_logic_1164.all;
+--! Use numeric elements
+use ieee.numeric_std.all;
 
---! @brief Right-shifter entity description
-
-entity right_shifter is
+--! @brief Entity for 24-bit counter
+--! @details This entity contains clock, enable and reset inputs
+--! and output signal.
+entity tx_counter_5_bit is
   port (
-    A_i   : in  std_logic_vector(7 downto 0); --! Input data
-    AMT_i : in  integer; --! Amount of bits to shift
-    Y_o   : out std_logic_vector(7 downto 0) --! Output or shifted data
-  );
-end right_shifter;
+    clk_i    : in  std_logic; --! Input clock signal
+    rst_i    : in  std_logic; --! Input reset signal
+    enable_i : in  std_logic; --! Input enable signal
+    count_o  : out std_logic_vector (4 downto 0)); --! Output signal for counting
+end tx_counter_5_bit;
 
---! @brief Architecture definition of Right-shifter
---! @details Following architecture describes logical shift to right
---! @details Depending on value of AMT_i shifting to right is performed by filling with zeros
---! @details For any value rather than within range from 0 to 7, output data is equal to input data, no shifting is performed
-
-architecture arch of right_shifter is
-  signal added : std_logic_vector(7 downto 0);
+--! @brief Architecture definition of 5-bit counter
+--! @details This design is used for realisation of I2S RX module,
+--! it checks if registers are full.
+architecture arch of tx_counter_5_bit is
+  signal count_pom : unsigned (4 downto 0); --! Temp signal for counting
 begin
-  added <= "00000000";
-  with AMT_i select
-    Y_o <= added(6 downto 0) & A_i(7) when 7,
-    added(5 downto 0) & A_i(7 downto 6) when 6,
-    added(4 downto 0) & A_i(7 downto 5) when 5,
-    added(3 downto 0) & A_i(7 downto 4) when 4,
-    added(2 downto 0) & A_i(7 downto 3) when 3,
-    added(1 downto 0) & A_i(7 downto 2) when 2,
-    added(0) & A_i(7 downto 1) when 1,
-    A_i when others;
+  counting : process (clk_i, rst_i)
+  begin
+    if rst_i = '1' then
+      count_pom <= (others => '0');
+    elsif clk_i'event and clk_i = '1' and enable_i = '1' then
+      if count_pom = 24 then
+        count_pom <= (0 => '1', others => '0');
+      else
+        count_pom <= count_pom + 1;
+      end if;
+    end if;
+  end process counting;
+  count_o <= std_logic_vector(count_pom);
 end arch;

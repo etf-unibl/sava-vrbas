@@ -4,11 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name:     SAVA TOP LEVEL DESIGN UNIT
+-- unit name:     buffer_24_bit
 --
 -- description:
 --
--- This file is used for instantiation of all design units.
+--   This file implements 24 bit buffer logic.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -35,3 +35,37 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+--! @file
+--! @brief 24-bit buffer
+-----------------------------------------------------------------------------
+--! Use standard library
+library ieee;
+--! Use logic elements
+use ieee.std_logic_1164.all;
+--! Use numeric elements
+use ieee.numeric_std.all;
+
+--! @brief Entity for 24-bit buffer
+--! @details This entity contains write enable and data inputs
+--! and data output.
+entity tx_buffer_24_bit is
+  port (
+    clk_i          : in  std_logic; --! Input clk signal
+    write_enable_i : in  std_logic; --! Input write enable signal
+    data_i         : in  std_logic_vector(23 downto 0); --! Input data
+    data_o         : out std_logic_vector(23 downto 0) --! Output data
+  );
+end entity tx_buffer_24_bit;
+
+--! @brief Architecture definition of 24-bit buffer
+--! @details This design is used for realisation of I2S RX module
+architecture arch of tx_buffer_24_bit is
+begin
+  writing : process (clk_i, write_enable_i)
+  begin
+    if rising_edge(clk_i) and write_enable_i = '1' then
+      data_o <= data_i;
+    end if;
+  end process writing;
+end architecture arch;

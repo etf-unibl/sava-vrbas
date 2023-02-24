@@ -48,19 +48,19 @@ use ieee.std_logic_1164.all;
 --! @brief Entity for dual-edge detector
 --! @details This entity contains clock, reset, input signal
 --!  and output signal
-entity dual_edge_detector is
+entity tx_edge_detector is
   port (
     clk_i    : in  std_logic; --! Input clock signal
     rst_i    : in  std_logic; --! Input reset signal
     strobe_i : in  std_logic; --! Input signal which transitions we detect
     p_o      : out std_logic --! Output signal which detects transitions of input
   );
-end dual_edge_detector;
+end tx_edge_detector;
 
 --! @brief Architecture definition of the dual-edge detector circuit
 --! @details This circuit is designed using Moore FSM with 3 states: zero, edge, one
 --! The circuit detects transitions 0-1 and 1-0
-architecture arch of dual_edge_detector is
+architecture arch of tx_edge_detector is
 
   type t_sm_de_type is
   (zero, one, edge);
@@ -88,7 +88,7 @@ begin
         end if;
       when one =>
         if strobe_i = '0' then
-          state_next <= edge;
+          state_next <= zero;
         else
           state_next <= one;
         end if;
