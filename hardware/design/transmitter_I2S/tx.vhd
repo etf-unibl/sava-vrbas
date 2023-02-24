@@ -71,7 +71,7 @@ architecture arch of tx is --! Required components
       p_o        : out  std_logic
     );
   end component;
-  component buffer_24_bit 
+  component buffer_24_bit
     port (
       clk_i : in std_logic;
       write_enable_i : in std_logic;
@@ -96,8 +96,8 @@ architecture arch of tx is --! Required components
   end component;
   signal data : std_logic_vector(23 downto 0) := (others => '0'); --! Temp signal for data input
   signal count_c : std_logic_vector(4 downto 0) := (others => '0'); --! Temp signal for counter
-  signal counter_s_s, sd_o_l, sd_o_r: std_logic := '0'; --! Temp signal for counter state
-  signal enable_e, enable_e_temp: std_logic := '0'; --! Temp enable signal
+  signal counter_s_s, sd_o_l, sd_o_r : std_logic := '0'; --! Temp signal for counter state
+  signal enable_e, enable_e_temp : std_logic := '0'; --! Temp enable signal
   signal reset_r : std_logic := '1'; --! Temp reset signal
   signal enable_l, enable_r : std_logic; --! Temp enable signals for left and right channels
 begin
@@ -105,13 +105,12 @@ begin
   ws_edge_detector : dual_edge_detector
   port map(clk_i    => clk_i,
            rst_i    => '0',
-           strobe_i => ws_i, 
+           strobe_i => ws_i,
            p_o      => enable_e_temp);
-			  
   scl_edge_detector : dual_edge_detector
   port map(clk_i    => clk_i,
            rst_i    => '0',
-           strobe_i => scl_i, 
+           strobe_i => scl_i,
            p_o      => enable_e);
 
   receiving : process (clk_i, enable_e_temp)
