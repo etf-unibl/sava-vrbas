@@ -73,4 +73,4 @@ begin
     added(1 downto 0) & A_i(7 downto 2) when 2,
     added(0) & A_i(7 downto 1) when 1,
     A_i when others;
-end architecture;
+end rtl;

@@ -45,7 +45,7 @@ use ieee.std_logic_1164.all;
 --! Use numeric elements
 use ieee.numeric_std.all;
 
---! @brief 
+--! @brief
 --! @details
 entity top_module is
   port (
@@ -55,11 +55,11 @@ entity top_module is
     ws_o         : out   std_logic;
     scl_o        : out   std_logic;
     sd_i         : in    std_logic; --! Input serial data signal
-    rpi_sda_io   : inout std_logic_vector(0 downto 0);
+    rpi_sda_b    : inout std_logic_vector(0 downto 0);
     i2c_scl_i    : in    std_logic;
     i2c_scl_o    : out   std_logic;
-    codec_sda_io : inout std_logic_vector(0 downto 0);
-    codec_xck    : out   std_logic;
+    codec_sda_b  : inout std_logic_vector(0 downto 0);
+    codec_xck_o  : out   std_logic;
     sd_o         : out   std_logic --! Output serial data signal
   );
 end top_module;
@@ -105,11 +105,11 @@ begin
   i2c : i2c_interface
   port map(
     clk_i       => clk_i,
-    rpi_sda_b   => rpi_sda_io,
+    rpi_sda_b   => rpi_sda_b,
     scl_i       => i2c_scl_i,
     scl_o       => i2c_scl_o,
-    codec_sda_b => codec_sda_io,
-    codec_xck_o => codec_xck);
+    codec_sda_b => codec_sda_b,
+    codec_xck_o => codec_xck_o);
 
   receiver : rx
   port map(
