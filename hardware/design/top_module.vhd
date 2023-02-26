@@ -52,6 +52,8 @@ entity top_module is
     clk_i        : in    std_logic; --! Input clock signal
     scl_i        : in    std_logic; --! Input i2s clock signal
     ws_i         : in    std_logic; --! Input word select signal
+    button_inc_i : in    std_logic;
+    button_dec_i : in    std_logic;
     ws_o         : out   std_logic;
     scl_o        : out   std_logic;
     sd_i         : in    std_logic; --! Input serial data signal
@@ -89,6 +91,15 @@ architecture arch of top_module is
       data_r_o : out std_logic_vector(23 downto 0) --! Output signal for right channel
     );
   end component;
+  component audio_processing
+    port (
+      clk_i        : in  std_logic; --! Input clock signal
+      data_i       : in  std_logic_vector(23 downto 0); --! Input data to manipulate
+      button_inc_i : in  std_logic; --! Button to increase gain
+      button_dec_i : in  std_logic; --! Button to decrease gain
+      data_o       : out std_logic_vector(23 downto 0) --! Output data, processed
+    );
+  end component;
   component tx
     port (
       clk_i    : in  std_logic; --! Input clock signal
@@ -100,7 +111,7 @@ architecture arch of top_module is
     );
   end component;
 
-  signal data_l, data_r : std_logic_vector(23 downto 0) := (others => '0');
+  signal data_l, data_r, data_l_processed, data_r_processed : std_logic_vector(23 downto 0) := (others => '0');
 begin
   i2c : i2c_interface
   port map(
@@ -120,14 +131,31 @@ begin
     data_l_o => data_l,
     data_r_o => data_r);
 
+  audio_left : audio_processing
+  port map(
+     clk_i        => clk_i,
+     data_i       => data_l,
+     button_inc_i => button_inc_i,
+     button_dec_i => button_dec_i,
+     data_o       => data_l_processed);
+
+  audio_right : audio_processing
+  port map(
+    clk_i         => clk_i,
+    data_i        => data_r,
+    button_inc_i  => button_inc_i,
+    button_dec_i  => button_dec_i,
+    data_o        => data_r_processed);
+
   transmitter : tx
   port map(
     clk_i    => clk_i,
     scl_i    => scl_i,
     ws_i     => ws_i,
-    data_l_i => data_l,
-    data_r_i => data_r,
+    data_l_i => data_l_processed,
+    data_r_i => data_r_processed,
     sd_o     => sd_o);
+
   ws_o  <= ws_i;
   scl_o <= scl_i;
 end arch;

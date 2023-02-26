@@ -4,11 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name: shift_register
+-- unit name: I2S TRANSMITTER VUNIT TESTBENCH
 --
 -- description:
 --
---   This file implements 24-bit shift register
+--   This file implements I2S transmitter testbench, following  VUnit testbench form.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -35,43 +35,87 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
---! @file
---! @brief 24-bit shifter
------------------------------------------------------------------------------
-
---! Use standard library
 library ieee;
---! Use logic elements
 use ieee.std_logic_1164.all;
---! Use numeric elements
 use ieee.numeric_std.all;
 
---! @brief Entity for 24-bit shift register
---! @details This entity contains clock, enable and data inputs
---! and data output.
-entity shift_register is
-  port (
-    clk_i    : in  std_logic; --! Input clock signal
-    rst_i    : in  std_logic; --! Input reset signal
-    enable_i : in  std_logic; --! Input enable signal
-    data_i   : in  std_logic; --! Input data
-    data_o   : out std_logic_vector (23 downto 0)); --! Output data
-end shift_register;
+library vunit_lib;
+context vunit_lib.vunit_context;
 
---! @brief Architecture definition of 24-bit shift register
---! @details This design is used for realisation of I2S RX module
-architecture arch of shift_register is
-  signal reg : std_logic_vector(23 downto 0) := "000000000000000000000000";
+use vunit_lib.run_pkg.all;
+use vunit_lib.check_pkg.all;
+
+library common_lib;
+
+entity tb_tx is
+  generic (runner_cfg : string);
+end entity;
+
+architecture arch of tb_tx is
+  signal clk_i : std_logic := '0';
+  signal scl_i : std_logic := '0';
+  signal ws_i : std_logic := '0';
+  signal data_l_i : std_logic_vector(23 downto 0);
+  signal data_r_i : std_logic_vector(23 downto 0);
+  signal sd_o : std_logic;
+
 begin
-  shifting : process (clk_i, rst_i)
+  invdut : entity common_lib.tx
+    port map(
+      clk_i => clk_i,
+      scl_i => scl_i,
+      ws_i => ws_i,
+      sd_o => sd_o,
+      data_r_i => data_r_i,
+      data_l_i => data_l_i);
+
+  clock : process
   begin
-    if rst_i = '1' then
-      reg <= (others => '0');
-    elsif rising_edge(clk_i) then
-      if enable_i = '1' then
-        reg <= reg(22 downto 0) & data_i;
+    clk_i <= not clk_i;
+    wait for 1 ns;
+  end process;
+
+  clocking : process
+  begin
+    scl_i <= not scl_i;
+    wait for 10 ns;
+  end process;
+
+  stimulus : process
+  begin
+    ws_i <= '0';
+    wait for 500 ns;
+    ws_i <= '1';
+    wait for 500 ns;
+  end process;
+
+  test_runner : process
+  begin
+    test_runner_setup(runner, runner_cfg);
+
+    while test_suite loop
+      if run("left_channel") then
+        info("Performing test left_channel");
+        data_l_i <= "101010101010101010101010";
+        data_r_i <= "000000000000000000000000";
+        wait for 2 ns;
+        wait for 1800 ns;
+        wait until ws_i = '0';
+        check_equal(sd_o, data_l_i(0));
+
+      elsif run("right_channel") then
+        info("Performing test right_channel");
+        data_r_i <= "101010101010101010101010";
+        data_l_i <= "000000000000000000000000";
+        -- wait for 2 ns;
+        wait for 510 ns;
+        wait for 2 ns;
+        check_equal(sd_o, data_r_i(0));
+        wait for 1000 ns;
       end if;
-    end if;
-  end process shifting;
-  data_o <= reg;
-end arch;
+    end loop;
+
+    test_runner_cleanup(runner);
+
+  end process;
+end architecture;

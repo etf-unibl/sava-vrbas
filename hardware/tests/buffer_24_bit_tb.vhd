@@ -4,11 +4,11 @@
 -- https://github.com/knezicm/sava-vrbas/
 -----------------------------------------------------------------------------
 --
--- unit name: shift_register
+-- unit name:    24-BIT BUFFER VUNIT TESTBENCH
 --
 -- description:
 --
---   This file implements 24-bit shift register
+--  This file implements 24-bit buffer testbench, following  VUnit testbench form.
 --
 -----------------------------------------------------------------------------
 -- Copyright (c) 2022 Faculty of Electrical Engineering
@@ -35,43 +35,72 @@
 -- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 -- OTHER DEALINGS IN THE SOFTWARE
 -----------------------------------------------------------------------------
---! @file
---! @brief 24-bit shifter
------------------------------------------------------------------------------
-
---! Use standard library
 library ieee;
---! Use logic elements
 use ieee.std_logic_1164.all;
---! Use numeric elements
 use ieee.numeric_std.all;
 
---! @brief Entity for 24-bit shift register
---! @details This entity contains clock, enable and data inputs
---! and data output.
-entity shift_register is
-  port (
-    clk_i    : in  std_logic; --! Input clock signal
-    rst_i    : in  std_logic; --! Input reset signal
-    enable_i : in  std_logic; --! Input enable signal
-    data_i   : in  std_logic; --! Input data
-    data_o   : out std_logic_vector (23 downto 0)); --! Output data
-end shift_register;
+library vunit_lib;
+context vunit_lib.vunit_context;
 
---! @brief Architecture definition of 24-bit shift register
---! @details This design is used for realisation of I2S RX module
-architecture arch of shift_register is
-  signal reg : std_logic_vector(23 downto 0) := "000000000000000000000000";
+use vunit_lib.run_pkg.all;
+use vunit_lib.check_pkg.all;
+
+library common_lib;
+
+entity tb_buffer is
+  generic (runner_cfg : string);
+end entity;
+
+architecture tb of tb_buffer is
+  signal clk_i : std_logic;
+  signal write_enable_i : std_logic;
+  signal data_i : std_logic_vector(23 downto 0) := (others => '0');
+  signal data_o : std_logic_vector(23 downto 0);
+
 begin
-  shifting : process (clk_i, rst_i)
+  invdut : entity common_lib.buffer_24_bit
+    port map(
+      clk_i  => clk_i,
+      write_enable_i => write_enable_i,
+      data_i => data_i,
+      data_o => data_o);
+
+  write_enable : process
   begin
-    if rst_i = '1' then
-      reg <= (others => '0');
-    elsif rising_edge(clk_i) then
-      if enable_i = '1' then
-        reg <= reg(22 downto 0) & data_i;
-      end if;
-    end if;
-  end process shifting;
-  data_o <= reg;
-end arch;
+    write_enable_i <= '1';
+    wait for 200 ns;
+    write_enable_i <= not(write_enable_i);
+    wait for 200 ns;
+  end process;
+
+  clock_stimulus : process
+  begin
+    clk_i <= '1';
+    wait for 10 ns;
+    clk_i <= '0';
+    wait for 10 ns;
+  end process;
+
+  test_runner : process
+  begin
+    test_runner_setup(runner, runner_cfg);
+
+    while test_suite loop
+      for i in 0 to 100 loop
+        if run("writing_to_buffer") then
+          info("Performing test writing_to_buffer");
+          data_i <= std_logic_vector(to_unsigned(i, 24));
+          wait for 2 ns;
+          wait until write_enable_i = '1' and rising_edge(clk_i);
+          wait for 4 ns;
+          check_equal(data_o, data_i);
+          wait for 10 ns;
+        end if;
+        wait for 2 ns;
+      end loop;
+    end loop;
+
+    test_runner_cleanup(runner);
+
+  end process;
+end architecture;
