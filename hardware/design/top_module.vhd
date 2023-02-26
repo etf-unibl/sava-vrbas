@@ -52,8 +52,8 @@ entity top_module is
     clk_i        : in    std_logic; --! Input clock signal
     scl_i        : in    std_logic; --! Input i2s clock signal
     ws_i         : in    std_logic; --! Input word select signal
-	 button_inc_i : in    std_logic;
-	 button_dec_i : in    std_logic;
+	button_inc_i : in    std_logic;
+	button_dec_i : in    std_logic;
     ws_o         : out   std_logic;
     scl_o        : out   std_logic;
     sd_i         : in    std_logic; --! Input serial data signal
@@ -133,19 +133,19 @@ begin
 	
   audio_left : audio_processing
   port map(
-    clk_i      => clk_i,
-    data_i     => data_l,
+     clk_i        => clk_i,
+     data_i       => data_l,
 	 button_inc_i => button_inc_i,
 	 button_dec_i => button_dec_i,
-	 data_o     => data_l_processed);
+	 data_o       => data_l_processed);
 	 
   audio_right : audio_processing
   port map(
-    clk_i      => clk_i,
-    data_i     => data_r,
-	 button_inc_i => button_inc_i,
-	 button_dec_i => button_dec_i,
-	 data_o     => data_r_processed);
+    clk_i        => clk_i,
+    data_i       => data_r,
+	button_inc_i => button_inc_i,
+	button_dec_i => button_dec_i,
+	data_o       => data_r_processed);
 
   transmitter : tx
   port map(
