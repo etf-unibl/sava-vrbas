@@ -61,7 +61,7 @@ end tx_shift_register;
 --! @brief Architecture definition of 24-bit shift register
 --! @details This design is used for realisation of I2S TX module
 architecture arch of tx_shift_register is
-  signal data_o_temp : std_logic;
+  signal data_o_temp : std_logic := '0';
 begin
   shifting : process (clk_i, rst_i)
     variable i : integer := 0;
